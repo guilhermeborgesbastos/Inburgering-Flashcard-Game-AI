@@ -1,0 +1,1475 @@
+
+<!--
+  Inburgering Dutch Vocabulary Flashcard Game
+
+  This offline HTML page presents a set of essential Dutch words typically
+  encountered in integration (inburgering) exams. Each flashcard shows a
+  Dutch word on the front and reveals its English translation along with
+  an example sentence (in Dutch and English) on the back. Players can
+  navigate through the deck, shuffle the order and flip the card to test
+  their memory.  The interface is intentionally minimal so it works
+  across devices, including iOS iPad browsers that support local
+  HTML/JavaScript files.  Note: Safari on iOS may not open HTML files
+  directly from the Files app; open it using a third‑party browser like
+  Edge or Chrome or host it on a simple web server.
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inburgering Dutch Vocabulary Flashcards</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+    header {
+      text-align: center;
+      padding: 20px;
+      background-color: #3949ab;
+      color: #fff;
+      width: 100%;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+    #card-container {
+      perspective: 1000px;
+      margin: 40px 0;
+    }
+    .card {
+      width: 380px;
+      height: 230px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s;
+      cursor: pointer;
+    }
+    .card.flip {
+      transform: rotateY(180deg);
+    }
+    .card-side {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border: 2px solid #3949ab;
+      border-radius: 8px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      box-sizing: border-box;
+      background-color: #fff;
+      color: #333;
+    }
+    .card-front {
+      font-size: 2rem;
+      font-weight: bold;
+    }
+    .card-back {
+      transform: rotateY(180deg);
+      font-size: 1rem;
+      flex-direction: column;
+      text-align: left;
+      overflow-y: auto;
+    }
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 40px;
+      flex-wrap: wrap;
+      padding: 0 16px;
+    }
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 16px;
+      padding: 0 16px;
+    }
+    .toolbar label {
+      font-weight: bold;
+      color: #fff;
+    }
+    .toolbar select {
+      padding: 10px 12px;
+      font-size: 1rem;
+      border: 1px solid #c5cae9;
+      border-radius: 4px;
+      background-color: #fff;
+      color: #333;
+    }
+    #deck-status {
+      color: #fff;
+      font-weight: bold;
+      text-align: center;
+      min-height: 1.4em;
+      padding-top: 16px;
+    }
+    button:disabled {
+      background-color: #9fa8da;
+      cursor: not-allowed;
+    }
+    button {
+      padding: 10px 16px;
+      font-size: 1rem;
+      border: none;
+      border-radius: 4px;
+      background-color: #3949ab;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    button:hover {
+      background-color: #303f9f;
+    }
+    @media (max-width: 480px) {
+      .card {
+        width: 90vw;
+        height: 50vw;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Inburgering Dutch Vocabulary Flashcards</h1>
+    <p>Tap the card to reveal the translation and example sentence.</p>
+    <br />
+    <div class="toolbar">
+      <label for="category-filter">Filter by:</label>
+      <select id="category-filter">
+        <option value="all">All categories</option>
+      </select>
+    </div>
+    <div id="deck-status" aria-live="polite"></div>
+  </header>
+  <div id="card-container">
+    <div class="card" id="card">
+      <div class="card-side card-front" id="card-front"></div>
+      <div class="card-side card-back" id="card-back"></div>
+    </div>
+  </div>
+  <div class="controls">
+    <button id="prev-btn">Previous</button>
+    <button id="shuffle-btn">Shuffle</button>
+    <button id="next-btn">Next</button>
+  </div>
+
+  <script>
+  const cards = [
+  {
+    "word": "zijn",
+    "translation": "to be",
+    "example": "Ik ben vandaag op tijd voor mijn afspraak.",
+    "exampleTranslation": "I am on time for my appointment today.",
+    "category": "verb"
+  },
+  {
+    "word": "hebben",
+    "translation": "to have",
+    "example": "Wij hebben morgen een examen Nederlands.",
+    "exampleTranslation": "We have a Dutch exam tomorrow.",
+    "category": "verb"
+  },
+  {
+    "word": "gaan",
+    "translation": "to go",
+    "example": "Ik ga morgen naar de gemeente voor een afspraak.",
+    "exampleTranslation": "I am going to the municipality tomorrow for an appointment.",
+    "category": "verb"
+  },
+  {
+    "word": "komen",
+    "translation": "to come",
+    "example": "Mijn docent kan vandaag niet naar school komen.",
+    "exampleTranslation": "My teacher cannot come to school today.",
+    "category": "verb"
+  },
+  {
+    "word": "willen",
+    "translation": "to want",
+    "example": "Ik wil graag een nieuwe afspraak maken.",
+    "exampleTranslation": "I would like to make a new appointment.",
+    "category": "verb"
+  },
+  {
+    "word": "kunnen",
+    "translation": "can / to be able to",
+    "example": "Kunt u mij helpen met dit formulier?",
+    "exampleTranslation": "Can you help me with this form?",
+    "category": "verb"
+  },
+  {
+    "word": "moeten",
+    "translation": "must / to have to",
+    "example": "Ik moet zondag werken in de winkel.",
+    "exampleTranslation": "I have to work in the shop on Sunday.",
+    "category": "verb"
+  },
+  {
+    "word": "mogen",
+    "translation": "may / to be allowed to",
+    "example": "Mag ik volgende week een dag vrij nemen?",
+    "exampleTranslation": "May I take a day off next week?",
+    "category": "verb"
+  },
+  {
+    "word": "werken",
+    "translation": "to work",
+    "example": "Zij werkt drie dagen per week in een kledingzaak.",
+    "exampleTranslation": "She works three days a week in a clothing store.",
+    "category": "verb"
+  },
+  {
+    "word": "wonen",
+    "translation": "to live",
+    "example": "Wij wonen sinds vorig jaar in deze straat.",
+    "exampleTranslation": "We have lived in this street since last year.",
+    "category": "verb"
+  },
+  {
+    "word": "leren",
+    "translation": "to learn",
+    "example": "Ik leer elke avond Nederlandse woorden voor het examen.",
+    "exampleTranslation": "I learn Dutch words every evening for the exam.",
+    "category": "verb"
+  },
+  {
+    "word": "spreken",
+    "translation": "to speak",
+    "example": "Tijdens het examen moet u duidelijk Nederlands spreken.",
+    "exampleTranslation": "During the exam you must speak Dutch clearly.",
+    "category": "verb"
+  },
+  {
+    "word": "luisteren",
+    "translation": "to listen",
+    "example": "Bij Luisteren moet u goed naar de vragen luisteren.",
+    "exampleTranslation": "In Listening you must listen carefully to the questions.",
+    "category": "verb"
+  },
+  {
+    "word": "lezen",
+    "translation": "to read",
+    "example": "Ik lees eerst de tekst en daarna de vragen.",
+    "exampleTranslation": "I first read the text and then the questions.",
+    "category": "verb"
+  },
+  {
+    "word": "schrijven",
+    "translation": "to write",
+    "example": "Voor Schrijven moet ik een korte e-mail schrijven.",
+    "exampleTranslation": "For Writing I have to write a short email.",
+    "category": "verb"
+  },
+  {
+    "word": "vragen",
+    "translation": "to ask",
+    "example": "Ik wil de docent iets vragen over de toets.",
+    "exampleTranslation": "I want to ask the teacher something about the test.",
+    "category": "verb"
+  },
+  {
+    "word": "antwoorden",
+    "translation": "to answer",
+    "example": "Antwoord in hele zinnen op de vraag.",
+    "exampleTranslation": "Answer the question in full sentences.",
+    "category": "verb"
+  },
+  {
+    "word": "bellen",
+    "translation": "to call",
+    "example": "Ik bel de huisarts om een afspraak te maken.",
+    "exampleTranslation": "I call the general practitioner to make an appointment.",
+    "category": "verb"
+  },
+  {
+    "word": "mailen",
+    "translation": "to email",
+    "example": "Ik mail mijn collega omdat ik wil ruilen.",
+    "exampleTranslation": "I email my colleague because I want to swap shifts.",
+    "category": "verb"
+  },
+  {
+    "word": "helpen",
+    "translation": "to help",
+    "example": "De medewerker helpt mij met mijn aanvraag.",
+    "exampleTranslation": "The employee helps me with my application.",
+    "category": "verb"
+  },
+  {
+    "word": "regelen",
+    "translation": "to arrange",
+    "example": "Ik moet mijn zaken op tijd regelen.",
+    "exampleTranslation": "I have to arrange my matters on time.",
+    "category": "verb"
+  },
+  {
+    "word": "betalen",
+    "translation": "to pay",
+    "example": "U kunt de rekening online betalen.",
+    "exampleTranslation": "You can pay the bill online.",
+    "category": "verb"
+  },
+  {
+    "word": "kopen",
+    "translation": "to buy",
+    "example": "Ik koop een kaartje voor de trein naar Utrecht.",
+    "exampleTranslation": "I buy a ticket for the train to Utrecht.",
+    "category": "verb"
+  },
+  {
+    "word": "verkopen",
+    "translation": "to sell",
+    "example": "In de winkel verkopen ze winterjassen.",
+    "exampleTranslation": "In the shop they sell winter coats.",
+    "category": "verb"
+  },
+  {
+    "word": "reizen",
+    "translation": "to travel",
+    "example": "Ik reis elke dag met de bus naar mijn werk.",
+    "exampleTranslation": "I travel to work by bus every day.",
+    "category": "verb"
+  },
+  {
+    "word": "wachten",
+    "translation": "to wait",
+    "example": "U moet even wachten in de wachtruimte.",
+    "exampleTranslation": "You have to wait a moment in the waiting room.",
+    "category": "verb"
+  },
+  {
+    "word": "zoeken",
+    "translation": "to search / to look for",
+    "example": "Ik zoek een baan in de techniek.",
+    "exampleTranslation": "I am looking for a job in technology.",
+    "category": "verb"
+  },
+  {
+    "word": "vinden",
+    "translation": "to find",
+    "example": "Ik kan mijn sleutel niet vinden.",
+    "exampleTranslation": "I cannot find my key.",
+    "category": "verb"
+  },
+  {
+    "word": "lenen",
+    "translation": "to borrow",
+    "example": "Mag ik uw boek voor twee dagen lenen?",
+    "exampleTranslation": "May I borrow your book for two days?",
+    "category": "verb"
+  },
+  {
+    "word": "terugbrengen",
+    "translation": "to return",
+    "example": "Ik breng het boek vrijdag terug naar de bibliotheek.",
+    "exampleTranslation": "I will return the book to the library on Friday.",
+    "category": "verb"
+  },
+  {
+    "word": "invullen",
+    "translation": "to fill in",
+    "example": "U moet dit formulier volledig invullen.",
+    "exampleTranslation": "You must fill in this form completely.",
+    "category": "verb"
+  },
+  {
+    "word": "aanmelden",
+    "translation": "to register / sign up",
+    "example": "Ik wil mij vandaag aanmelden voor het examen.",
+    "exampleTranslation": "I want to register for the exam today.",
+    "category": "verb"
+  },
+  {
+    "word": "afmelden",
+    "translation": "to cancel / unregister",
+    "example": "Ik moet mij afmelden omdat ik ziek ben.",
+    "exampleTranslation": "I have to cancel because I am ill.",
+    "category": "verb"
+  },
+  {
+    "word": "verzetten",
+    "translation": "to reschedule",
+    "example": "Ik wil de afspraak verzetten naar volgende week.",
+    "exampleTranslation": "I want to reschedule the appointment to next week.",
+    "category": "verb"
+  },
+  {
+    "word": "ruilen",
+    "translation": "to swap / exchange",
+    "example": "Kun jij zondag met mij van dienst ruilen?",
+    "exampleTranslation": "Can you swap shifts with me on Sunday?",
+    "category": "verb"
+  },
+  {
+    "word": "solliciteren",
+    "translation": "to apply for a job",
+    "example": "Volgende maand wil ik op een nieuwe baan solliciteren.",
+    "exampleTranslation": "Next month I want to apply for a new job.",
+    "category": "verb"
+  },
+  {
+    "word": "beginnen",
+    "translation": "to begin",
+    "example": "De cursus begint om negen uur 's morgens.",
+    "exampleTranslation": "The course starts at nine o'clock in the morning.",
+    "category": "verb"
+  },
+  {
+    "word": "stoppen",
+    "translation": "to stop",
+    "example": "De bus stopt voor het station.",
+    "exampleTranslation": "The bus stops in front of the station.",
+    "category": "verb"
+  },
+  {
+    "word": "meenemen",
+    "translation": "to bring along",
+    "example": "Neem uw identiteitsbewijs mee naar het examen.",
+    "exampleTranslation": "Bring your identity document to the exam.",
+    "category": "verb"
+  },
+  {
+    "word": "openen",
+    "translation": "to open",
+    "example": "De winkel opent om tien uur.",
+    "exampleTranslation": "The shop opens at ten o'clock.",
+    "category": "verb"
+  },
+  {
+    "word": "sluiten",
+    "translation": "to close",
+    "example": "Wilt u de deur sluiten als u weggaat?",
+    "exampleTranslation": "Will you close the door when you leave?",
+    "category": "verb"
+  },
+  {
+    "word": "schoonmaken",
+    "translation": "to clean",
+    "example": "Ik maak zaterdag de keuken schoon.",
+    "exampleTranslation": "I clean the kitchen on Saturday.",
+    "category": "verb"
+  },
+  {
+    "word": "stofzuigen",
+    "translation": "to vacuum",
+    "example": "Mijn collega moet vanmiddag de vloer stofzuigen.",
+    "exampleTranslation": "My colleague has to vacuum the floor this afternoon.",
+    "category": "verb"
+  },
+  {
+    "word": "ophangen",
+    "translation": "to hang up",
+    "example": "Hang de jassen netjes op in de winkel.",
+    "exampleTranslation": "Hang the jackets neatly in the shop.",
+    "category": "verb"
+  },
+  {
+    "word": "melden",
+    "translation": "to report",
+    "example": "Ik wil een probleem in mijn straat melden.",
+    "exampleTranslation": "I want to report a problem in my street.",
+    "category": "verb"
+  },
+  {
+    "word": "uitleggen",
+    "translation": "to explain",
+    "example": "Kunt u de opdracht nog een keer uitleggen?",
+    "exampleTranslation": "Can you explain the task one more time?",
+    "category": "verb"
+  },
+  {
+    "word": "afspreken",
+    "translation": "to arrange / agree",
+    "example": "Wij spreken af op dinsdag om drie uur.",
+    "exampleTranslation": "We agree to meet on Tuesday at three o'clock.",
+    "category": "verb"
+  },
+  {
+    "word": "bevestigen",
+    "translation": "to confirm",
+    "example": "Kunt u mijn afspraak per e-mail bevestigen?",
+    "exampleTranslation": "Can you confirm my appointment by email?",
+    "category": "verb"
+  },
+  {
+    "word": "vergeten",
+    "translation": "to forget",
+    "example": "Ik ben mijn boek thuis vergeten.",
+    "exampleTranslation": "I forgot my book at home.",
+    "category": "verb"
+  },
+  {
+    "word": "begrijpen",
+    "translation": "to understand",
+    "example": "Ik begrijp de vraag, maar het antwoord is moeilijk.",
+    "exampleTranslation": "I understand the question, but the answer is difficult.",
+    "category": "verb"
+  },
+  {
+    "word": "oefenen",
+    "translation": "to practice",
+    "example": "Ik oefen elke dag voor het examen Spreken.",
+    "exampleTranslation": "I practice every day for the Speaking exam.",
+    "category": "verb"
+  },
+  {
+    "word": "de afspraak",
+    "translation": "the appointment",
+    "example": "Ik heb morgen een afspraak bij de huisarts.",
+    "exampleTranslation": "I have an appointment with the general practitioner tomorrow.",
+    "category": "noun"
+  },
+  {
+    "word": "de docent",
+    "translation": "the teacher",
+    "example": "De docent stuurt ons vandaag een e-mail.",
+    "exampleTranslation": "The teacher sends us an email today.",
+    "category": "noun"
+  },
+  {
+    "word": "de student",
+    "translation": "the student",
+    "example": "De student komt te laat in de les.",
+    "exampleTranslation": "The student arrives late to class.",
+    "category": "noun"
+  },
+  {
+    "word": "de opleiding",
+    "translation": "the training / course of study",
+    "example": "Voor mijn opleiding moet ik veel lezen.",
+    "exampleTranslation": "For my course of study I have to read a lot.",
+    "category": "noun"
+  },
+  {
+    "word": "de cursus",
+    "translation": "the course",
+    "example": "De cursus duurt twaalf weken.",
+    "exampleTranslation": "The course lasts twelve weeks.",
+    "category": "noun"
+  },
+  {
+    "word": "het examen",
+    "translation": "the exam",
+    "example": "Het examen begint om half tien.",
+    "exampleTranslation": "The exam starts at half past nine.",
+    "category": "noun"
+  },
+  {
+    "word": "het formulier",
+    "translation": "the form",
+    "example": "Dit formulier moet u met blauwe pen invullen.",
+    "exampleTranslation": "You must fill in this form with a blue pen.",
+    "category": "noun"
+  },
+  {
+    "word": "de vraag",
+    "translation": "the question",
+    "example": "Lees de vraag goed voordat u antwoord geeft.",
+    "exampleTranslation": "Read the question carefully before you answer.",
+    "category": "noun"
+  },
+  {
+    "word": "het antwoord",
+    "translation": "the answer",
+    "example": "Het juiste antwoord staat in de tekst.",
+    "exampleTranslation": "The correct answer is in the text.",
+    "category": "noun"
+  },
+  {
+    "word": "de datum",
+    "translation": "the date",
+    "example": "Schrijf de juiste datum bovenaan de brief.",
+    "exampleTranslation": "Write the correct date at the top of the letter.",
+    "category": "noun"
+  },
+  {
+    "word": "de tijd",
+    "translation": "the time",
+    "example": "Kunt u mij de tijd van de afspraak sturen?",
+    "exampleTranslation": "Can you send me the time of the appointment?",
+    "category": "noun"
+  },
+  {
+    "word": "het adres",
+    "translation": "the address",
+    "example": "Mijn nieuwe adres staat in de e-mail.",
+    "exampleTranslation": "My new address is in the email.",
+    "category": "noun"
+  },
+  {
+    "word": "het telefoonnummer",
+    "translation": "the phone number",
+    "example": "Vul hier uw telefoonnummer in.",
+    "exampleTranslation": "Fill in your phone number here.",
+    "category": "noun"
+  },
+  {
+    "word": "de e-mail",
+    "translation": "the email",
+    "example": "Ik stuur mijn docent een e-mail met een vraag.",
+    "exampleTranslation": "I send my teacher an email with a question.",
+    "category": "noun"
+  },
+  {
+    "word": "de sportschool",
+    "translation": "the gym",
+    "example": "Ik wil mij inschrijven bij een sportschool in de buurt.",
+    "exampleTranslation": "I want to register at a gym in the neighborhood.",
+    "category": "noun"
+  },
+  {
+    "word": "de groepsles",
+    "translation": "the group lesson",
+    "example": "Welke groepsles wilt u deze week volgen?",
+    "exampleTranslation": "Which group lesson do you want to attend this week?",
+    "category": "noun"
+  },
+  {
+    "word": "de gezondheid",
+    "translation": "the health",
+    "example": "Mijn gezondheid is nu beter dan vorige maand.",
+    "exampleTranslation": "My health is better now than last month.",
+    "category": "noun"
+  },
+  {
+    "word": "de huisarts",
+    "translation": "the general practitioner",
+    "example": "De huisarts heeft morgen nog een plek vrij.",
+    "exampleTranslation": "The general practitioner still has a free slot tomorrow.",
+    "category": "noun"
+  },
+  {
+    "word": "het medicijn",
+    "translation": "the medicine",
+    "example": "Neem dit medicijn na het eten.",
+    "exampleTranslation": "Take this medicine after eating.",
+    "category": "noun"
+  },
+  {
+    "word": "het ziekenhuis",
+    "translation": "the hospital",
+    "example": "Mijn afspraak in het ziekenhuis is op maandag.",
+    "exampleTranslation": "My appointment at the hospital is on Monday.",
+    "category": "noun"
+  },
+  {
+    "word": "de verzekering",
+    "translation": "the insurance",
+    "example": "De verzekering vraagt om een schadeformulier.",
+    "exampleTranslation": "The insurance company asks for a damage form.",
+    "category": "noun"
+  },
+  {
+    "word": "de schade",
+    "translation": "the damage",
+    "example": "Er is schade aan het raam na de inbraak.",
+    "exampleTranslation": "There is damage to the window after the burglary.",
+    "category": "noun"
+  },
+  {
+    "word": "de inbraak",
+    "translation": "the burglary",
+    "example": "Na de inbraak heb ik de politie gebeld.",
+    "exampleTranslation": "After the burglary I called the police.",
+    "category": "noun"
+  },
+  {
+    "word": "de politie",
+    "translation": "the police",
+    "example": "De politie komt vanavond langs voor extra informatie.",
+    "exampleTranslation": "The police are coming by this evening for additional information.",
+    "category": "noun"
+  },
+  {
+    "word": "de gemeente",
+    "translation": "the municipality",
+    "example": "Ik meld het probleem vandaag bij de gemeente.",
+    "exampleTranslation": "I report the problem to the municipality today.",
+    "category": "noun"
+  },
+  {
+    "word": "de straat",
+    "translation": "the street",
+    "example": "In onze straat ligt veel afval.",
+    "exampleTranslation": "There is a lot of rubbish in our street.",
+    "category": "noun"
+  },
+  {
+    "word": "het afval",
+    "translation": "the rubbish / waste",
+    "example": "Het afval ligt al twee dagen op straat.",
+    "exampleTranslation": "The rubbish has been lying in the street for two days.",
+    "category": "noun"
+  },
+  {
+    "word": "de stoep",
+    "translation": "the sidewalk",
+    "example": "De stoep is kapot en dat is gevaarlijk.",
+    "exampleTranslation": "The sidewalk is broken and that is dangerous.",
+    "category": "noun"
+  },
+  {
+    "word": "de sleutel",
+    "translation": "the key",
+    "example": "Vergeet niet de sleutel in te leveren.",
+    "exampleTranslation": "Don't forget to hand in the key.",
+    "category": "noun"
+  },
+  {
+    "word": "de winkel",
+    "translation": "the shop",
+    "example": "De winkel is op zondag gesloten.",
+    "exampleTranslation": "The shop is closed on Sunday.",
+    "category": "noun"
+  },
+  {
+    "word": "de kledingzaak",
+    "translation": "the clothing store",
+    "example": "Ik werk parttime in een kledingzaak in het centrum.",
+    "exampleTranslation": "I work part-time in a clothing store in the city center.",
+    "category": "noun"
+  },
+  {
+    "word": "de bibliotheek",
+    "translation": "the library",
+    "example": "In de bibliotheek zoek ik een boek voor school.",
+    "exampleTranslation": "At the library I look for a book for school.",
+    "category": "noun"
+  },
+  {
+    "word": "het boek",
+    "translation": "the book",
+    "example": "Ik moet het boek morgen teruggeven.",
+    "exampleTranslation": "I have to return the book tomorrow.",
+    "category": "noun"
+  },
+  {
+    "word": "de collega",
+    "translation": "the colleague",
+    "example": "Mijn collega begint vandaag om twaalf uur.",
+    "exampleTranslation": "My colleague starts today at twelve o'clock.",
+    "category": "noun"
+  },
+  {
+    "word": "de chef",
+    "translation": "the boss",
+    "example": "Ik stuur mijn chef een e-mail voor een vrije dag.",
+    "exampleTranslation": "I send my boss an email for a day off.",
+    "category": "noun"
+  },
+  {
+    "word": "de vrije dag",
+    "translation": "the day off",
+    "example": "Volgende week wil ik een vrije dag aanvragen.",
+    "exampleTranslation": "Next week I want to request a day off.",
+    "category": "noun"
+  },
+  {
+    "word": "de buurman",
+    "translation": "the male neighbor",
+    "example": "Mijn buurman helpt mij soms met zware spullen.",
+    "exampleTranslation": "My male neighbor sometimes helps me with heavy things.",
+    "category": "noun"
+  },
+  {
+    "word": "de buurvrouw",
+    "translation": "the female neighbor",
+    "example": "De buurvrouw woont al tien jaar in deze flat.",
+    "exampleTranslation": "The female neighbor has lived in this apartment building for ten years.",
+    "category": "noun"
+  },
+  {
+    "word": "het werk",
+    "translation": "the work",
+    "example": "Ik ga vroeg weg voor mijn werk.",
+    "exampleTranslation": "I leave early for my work.",
+    "category": "noun"
+  },
+  {
+    "word": "het inkomen",
+    "translation": "the income",
+    "example": "Met dit inkomen kan ik de huur betalen.",
+    "exampleTranslation": "With this income I can pay the rent.",
+    "category": "noun"
+  },
+  {
+    "word": "de huur",
+    "translation": "the rent",
+    "example": "De huur moet voor de eerste van de maand betaald zijn.",
+    "exampleTranslation": "The rent must be paid before the first of the month.",
+    "category": "noun"
+  },
+  {
+    "word": "de woning",
+    "translation": "the home / house",
+    "example": "Wij zoeken een grotere woning voor ons gezin.",
+    "exampleTranslation": "We are looking for a bigger home for our family.",
+    "category": "noun"
+  },
+  {
+    "word": "de trein",
+    "translation": "the train",
+    "example": "De trein naar Amsterdam vertrekt van spoor drie.",
+    "exampleTranslation": "The train to Amsterdam leaves from platform three.",
+    "category": "noun"
+  },
+  {
+    "word": "de bus",
+    "translation": "the bus",
+    "example": "Ik neem de bus naar het station.",
+    "exampleTranslation": "I take the bus to the station.",
+    "category": "noun"
+  },
+  {
+    "word": "het station",
+    "translation": "the station",
+    "example": "Het station is vijf minuten lopen vanaf hier.",
+    "exampleTranslation": "The station is a five-minute walk from here.",
+    "category": "noun"
+  },
+  {
+    "word": "het kaartje",
+    "translation": "the ticket",
+    "example": "Hebt u al een kaartje voor de bus gekocht?",
+    "exampleTranslation": "Have you already bought a ticket for the bus?",
+    "category": "noun"
+  },
+  {
+    "word": "de rekening",
+    "translation": "the bill",
+    "example": "De rekening moet deze week betaald worden.",
+    "exampleTranslation": "The bill has to be paid this week.",
+    "category": "noun"
+  },
+  {
+    "word": "de brief",
+    "translation": "the letter",
+    "example": "Ik krijg morgen een brief van DUO.",
+    "exampleTranslation": "I will receive a letter from DUO tomorrow.",
+    "category": "noun"
+  },
+  {
+    "word": "het bericht",
+    "translation": "the message",
+    "example": "Bedankt voor uw bericht over de afspraak.",
+    "exampleTranslation": "Thank you for your message about the appointment.",
+    "category": "noun"
+  },
+  {
+    "word": "de baan",
+    "translation": "the job",
+    "example": "Mijn zus heeft een nieuwe baan gevonden.",
+    "exampleTranslation": "My sister has found a new job.",
+    "category": "noun"
+  },
+  {
+    "word": "de vacature",
+    "translation": "the vacancy / job opening",
+    "example": "Deze vacature past goed bij mijn ervaring.",
+    "exampleTranslation": "This job vacancy suits my experience well.",
+    "category": "noun"
+  },
+  {
+    "word": "het gesprek",
+    "translation": "the conversation / interview",
+    "example": "Morgen heb ik een gesprek met mijn nieuwe werkgever.",
+    "exampleTranslation": "Tomorrow I have a conversation with my new employer.",
+    "category": "noun"
+  },
+  {
+    "word": "de werkgever",
+    "translation": "the employer",
+    "example": "De werkgever wil mijn cv eerst lezen.",
+    "exampleTranslation": "The employer wants to read my CV first.",
+    "category": "noun"
+  },
+  {
+    "word": "de school",
+    "translation": "the school",
+    "example": "Mijn kinderen gaan dichtbij huis naar school.",
+    "exampleTranslation": "My children go to school close to home.",
+    "category": "noun"
+  },
+  {
+    "word": "de les",
+    "translation": "the lesson",
+    "example": "De les begint direct na de pauze.",
+    "exampleTranslation": "The lesson starts right after the break.",
+    "category": "noun"
+  },
+  {
+    "word": "de toets",
+    "translation": "the test",
+    "example": "Volgende week maak ik een toets op school.",
+    "exampleTranslation": "Next week I take a test at school.",
+    "category": "noun"
+  },
+  {
+    "word": "de aanvraag",
+    "translation": "the application / request",
+    "example": "Uw aanvraag is vandaag ontvangen.",
+    "exampleTranslation": "Your application was received today.",
+    "category": "noun"
+  },
+  {
+    "word": "de wachtruimte",
+    "translation": "the waiting room",
+    "example": "U kunt plaatsnemen in de wachtruimte.",
+    "exampleTranslation": "You can take a seat in the waiting room.",
+    "category": "noun"
+  },
+  {
+    "word": "de identiteit",
+    "translation": "the identity",
+    "example": "Bij het examen controleren ze uw identiteit.",
+    "exampleTranslation": "At the exam they check your identity.",
+    "category": "noun"
+  },
+  {
+    "word": "het identiteitsbewijs",
+    "translation": "the identity document",
+    "example": "Neem uw identiteitsbewijs mee naar de toetslocatie.",
+    "exampleTranslation": "Bring your identity document to the test location.",
+    "category": "noun"
+  },
+  {
+    "word": "de buurt",
+    "translation": "the neighborhood",
+    "example": "In onze buurt is een nieuwe bibliotheek geopend.",
+    "exampleTranslation": "A new library has opened in our neighborhood.",
+    "category": "noun"
+  },
+  {
+    "word": "de buren",
+    "translation": "the neighbors",
+    "example": "Onze buren geven een feest op zaterdag.",
+    "exampleTranslation": "Our neighbors are having a party on Saturday.",
+    "category": "noun"
+  },
+  {
+    "word": "de pauze",
+    "translation": "the break",
+    "example": "Na de pauze begint de les weer.",
+    "exampleTranslation": "After the break the lesson starts again.",
+    "category": "noun"
+  },
+  {
+    "word": "druk",
+    "translation": "busy",
+    "example": "Het is vandaag erg druk bij de gemeente.",
+    "exampleTranslation": "It is very busy at the municipality today.",
+    "category": "adjective"
+  },
+  {
+    "word": "ziek",
+    "translation": "ill",
+    "example": "Ik ben ziek en kan niet naar school komen.",
+    "exampleTranslation": "I am ill and cannot come to school.",
+    "category": "adjective"
+  },
+  {
+    "word": "laat",
+    "translation": "late",
+    "example": "Sorry, ik ben te laat voor de afspraak.",
+    "exampleTranslation": "Sorry, I am late for the appointment.",
+    "category": "adjective"
+  },
+  {
+    "word": "vroeg",
+    "translation": "early",
+    "example": "Morgen moet ik vroeg opstaan voor mijn examen.",
+    "exampleTranslation": "Tomorrow I have to get up early for my exam.",
+    "category": "adjective"
+  },
+  {
+    "word": "vrij",
+    "translation": "free / off",
+    "example": "Zondag ben ik vrij van mijn werk.",
+    "exampleTranslation": "On Sunday I am off from work.",
+    "category": "adjective"
+  },
+  {
+    "word": "kapot",
+    "translation": "broken",
+    "example": "Het raam is kapot door de inbraak.",
+    "exampleTranslation": "The window is broken because of the burglary.",
+    "category": "adjective"
+  },
+  {
+    "word": "gestolen",
+    "translation": "stolen",
+    "example": "Mijn laptop is tijdens de inbraak gestolen.",
+    "exampleTranslation": "My laptop was stolen during the burglary.",
+    "category": "adjective"
+  },
+  {
+    "word": "open",
+    "translation": "open",
+    "example": "Is de bibliotheek op zaterdag open?",
+    "exampleTranslation": "Is the library open on Saturday?",
+    "category": "adjective"
+  },
+  {
+    "word": "dicht",
+    "translation": "closed",
+    "example": "De winkel is op maandagavond dicht.",
+    "exampleTranslation": "The shop is closed on Monday evening.",
+    "category": "adjective"
+  },
+  {
+    "word": "belangrijk",
+    "translation": "important",
+    "example": "Het is belangrijk om op tijd te komen.",
+    "exampleTranslation": "It is important to arrive on time.",
+    "category": "adjective"
+  },
+  {
+    "word": "mogelijk",
+    "translation": "possible",
+    "example": "Is het mogelijk om de afspraak te verzetten?",
+    "exampleTranslation": "Is it possible to reschedule the appointment?",
+    "category": "adjective"
+  },
+  {
+    "word": "klaar",
+    "translation": "ready",
+    "example": "Ik ben klaar met het invullen van het formulier.",
+    "exampleTranslation": "I am ready with filling in the form.",
+    "category": "adjective"
+  },
+  {
+    "word": "gezellig",
+    "translation": "pleasant / cozy",
+    "example": "In het weekend drinken wij gezellig koffie met vrienden.",
+    "exampleTranslation": "At the weekend we pleasantly drink coffee with friends.",
+    "category": "adjective"
+  },
+  {
+    "word": "boos",
+    "translation": "angry",
+    "example": "De buurman is boos over het lawaai.",
+    "exampleTranslation": "The neighbor is angry about the noise.",
+    "category": "adjective"
+  },
+  {
+    "word": "tevreden",
+    "translation": "satisfied",
+    "example": "Ik ben tevreden met mijn nieuwe woning.",
+    "exampleTranslation": "I am satisfied with my new home.",
+    "category": "adjective"
+  },
+  {
+    "word": "nodig",
+    "translation": "necessary / needed",
+    "example": "Ik heb dit boek nodig voor mijn opleiding.",
+    "exampleTranslation": "I need this book for my course of study.",
+    "category": "adjective"
+  },
+  {
+    "word": "beschikbaar",
+    "translation": "available",
+    "example": "De docent is morgenmiddag beschikbaar voor een gesprek.",
+    "exampleTranslation": "The teacher is available tomorrow afternoon for a conversation.",
+    "category": "adjective"
+  },
+  {
+    "word": "veilig",
+    "translation": "safe",
+    "example": "Een kapotte stoep is niet veilig voor kinderen.",
+    "exampleTranslation": "A broken sidewalk is not safe for children.",
+    "category": "adjective"
+  },
+  {
+    "word": "vol",
+    "translation": "full",
+    "example": "De bus is 's morgens vaak erg vol.",
+    "exampleTranslation": "The bus is often very full in the morning.",
+    "category": "adjective"
+  },
+  {
+    "word": "leeg",
+    "translation": "empty",
+    "example": "Mijn koelkast is bijna leeg, dus ik ga boodschappen doen.",
+    "exampleTranslation": "My fridge is almost empty, so I am going grocery shopping.",
+    "category": "adjective"
+  },
+  {
+    "word": "ik",
+    "translation": "I",
+    "example": "Ik schrijf vandaag een e-mail aan mijn docent.",
+    "exampleTranslation": "I am writing an email to my teacher today.",
+    "category": "pronoun"
+  },
+  {
+    "word": "u",
+    "translation": "you (formal)",
+    "example": "Kunt u uw naam hier opschrijven?",
+    "exampleTranslation": "Can you write your name here?",
+    "category": "pronoun"
+  },
+  {
+    "word": "wij",
+    "translation": "we",
+    "example": "Wij oefenen samen voor het examen.",
+    "exampleTranslation": "We practice together for the exam.",
+    "category": "pronoun"
+  },
+  {
+    "word": "mijn",
+    "translation": "my",
+    "example": "Mijn afspraak is verplaatst naar donderdag.",
+    "exampleTranslation": "My appointment has been moved to Thursday.",
+    "category": "pronoun"
+  },
+  {
+    "word": "uw",
+    "translation": "your (formal)",
+    "example": "Wat is uw adres en telefoonnummer?",
+    "exampleTranslation": "What is your address and phone number?",
+    "category": "pronoun"
+  },
+  {
+    "word": "de",
+    "translation": "the",
+    "example": "De bus naar het centrum vertrekt over vijf minuten.",
+    "exampleTranslation": "The bus to the city center leaves in five minutes.",
+    "category": "article"
+  },
+  {
+    "word": "het",
+    "translation": "the",
+    "example": "Het examen duurt vijfenzestig minuten.",
+    "exampleTranslation": "The exam lasts sixty-five minutes.",
+    "category": "article"
+  },
+  {
+    "word": "een",
+    "translation": "a / an",
+    "example": "Ik wil een afspraak maken voor volgende week.",
+    "exampleTranslation": "I want to make an appointment for next week.",
+    "category": "article"
+  },
+  {
+    "word": "deze",
+    "translation": "this",
+    "example": "Deze vraag is makkelijker dan de vorige.",
+    "exampleTranslation": "This question is easier than the previous one.",
+    "category": "pronoun"
+  },
+  {
+    "word": "die",
+    "translation": "that",
+    "example": "Die brief moet u goed bewaren.",
+    "exampleTranslation": "You must keep that letter carefully.",
+    "category": "pronoun"
+  },
+  {
+    "word": "omdat",
+    "translation": "because",
+    "example": "Ik kan niet komen omdat ik moet werken.",
+    "exampleTranslation": "I cannot come because I have to work.",
+    "category": "connector_and_adverb"
+  },
+  {
+    "word": "maar",
+    "translation": "but",
+    "example": "Ik begrijp de tekst, maar niet alle woorden.",
+    "exampleTranslation": "I understand the text, but not all the words.",
+    "category": "connector_and_adverb"
+  },
+  {
+    "word": "graag",
+    "translation": "gladly / please",
+    "example": "Ik wil graag een nieuwe datum afspreken.",
+    "exampleTranslation": "I would like to agree on a new date.",
+    "category": "connector_and_adverb"
+  },
+  {
+    "word": "misschien",
+    "translation": "maybe",
+    "example": "Misschien kan ik morgenmiddag langskomen.",
+    "exampleTranslation": "Maybe I can come by tomorrow afternoon.",
+    "category": "connector_and_adverb"
+  },
+  {
+    "word": "alstublieft",
+    "translation": "please / here you are",
+    "example": "Kunt u mij alstublieft terugbellen?",
+    "exampleTranslation": "Could you please call me back?",
+    "category": "connector_and_adverb"
+  },
+  {
+    "word": "dank u wel",
+    "translation": "thank you",
+    "example": "Dank u wel voor uw snelle antwoord.",
+    "exampleTranslation": "Thank you for your quick reply.",
+    "category": "connector_and_adverb"
+  },
+  {
+    "word": "Ik wil graag...",
+    "translation": "I would like...",
+    "example": "Ik wil graag een afspraak maken bij de huisarts.",
+    "exampleTranslation": "I would like to make an appointment with the general practitioner.",
+    "category": "phrase"
+  },
+  {
+    "word": "Kunt u mij helpen?",
+    "translation": "Can you help me?",
+    "example": "Kunt u mij helpen met dit moeilijke formulier?",
+    "exampleTranslation": "Can you help me with this difficult form?",
+    "category": "phrase"
+  },
+  {
+    "word": "Mag ik een afspraak maken?",
+    "translation": "May I make an appointment?",
+    "example": "Goedemorgen, mag ik een afspraak maken voor volgende week?",
+    "exampleTranslation": "Good morning, may I make an appointment for next week?",
+    "category": "phrase"
+  },
+  {
+    "word": "Ik kan niet komen.",
+    "translation": "I cannot come.",
+    "example": "Ik kan morgen niet komen omdat ik ziek ben.",
+    "exampleTranslation": "I cannot come tomorrow because I am ill.",
+    "category": "phrase"
+  },
+  {
+    "word": "Ik ben te laat.",
+    "translation": "I am late.",
+    "example": "Sorry, ik ben te laat door de treinvertraging.",
+    "exampleTranslation": "Sorry, I am late because of the train delay.",
+    "category": "phrase"
+  },
+  {
+    "word": "Wanneer kan ik langskomen?",
+    "translation": "When can I come by?",
+    "example": "Wanneer kan ik langskomen om het formulier af te geven?",
+    "exampleTranslation": "When can I come by to hand in the form?",
+    "category": "phrase"
+  },
+  {
+    "word": "Ik heb een probleem.",
+    "translation": "I have a problem.",
+    "example": "Ik heb een probleem met mijn huurcontract.",
+    "exampleTranslation": "I have a problem with my rental contract.",
+    "category": "phrase"
+  },
+  {
+    "word": "Kunt u het uitleggen?",
+    "translation": "Can you explain it?",
+    "example": "Ik begrijp de opdracht niet. Kunt u het uitleggen?",
+    "exampleTranslation": "I do not understand the task. Can you explain it?",
+    "category": "phrase"
+  },
+  {
+    "word": "Waar kan ik...",
+    "translation": "Where can I...",
+    "example": "Waar kan ik mij aanmelden voor het examen?",
+    "exampleTranslation": "Where can I register for the exam?",
+    "category": "phrase"
+  },
+  {
+    "word": "Hoeveel kost het?",
+    "translation": "How much does it cost?",
+    "example": "Hoeveel kost het om opnieuw examen te doen?",
+    "exampleTranslation": "How much does it cost to take the exam again?",
+    "category": "phrase"
+  },
+  {
+    "word": "Ik zoek werk.",
+    "translation": "I am looking for work.",
+    "example": "Ik zoek werk voor drie dagen per week.",
+    "exampleTranslation": "I am looking for work for three days a week.",
+    "category": "phrase"
+  },
+  {
+    "word": "Ik wil een vrije dag aanvragen.",
+    "translation": "I want to request a day off.",
+    "example": "Ik wil een vrije dag aanvragen voor vrijdag 12 mei.",
+    "exampleTranslation": "I want to request a day off for Friday 12 May.",
+    "category": "phrase"
+  },
+  {
+    "word": "Ik wil de afspraak verzetten.",
+    "translation": "I want to reschedule the appointment.",
+    "example": "Ik wil de afspraak verzetten naar maandagmiddag.",
+    "exampleTranslation": "I want to reschedule the appointment to Monday afternoon.",
+    "category": "phrase"
+  },
+  {
+    "word": "Kunt u mij terugbellen?",
+    "translation": "Can you call me back?",
+    "example": "Ik ben nu op mijn werk. Kunt u mij vanavond terugbellen?",
+    "exampleTranslation": "I am at work now. Can you call me back this evening?",
+    "category": "phrase"
+  },
+  {
+    "word": "Bedankt voor uw bericht.",
+    "translation": "Thank you for your message.",
+    "example": "Bedankt voor uw bericht. Ik antwoord zo snel mogelijk.",
+    "exampleTranslation": "Thank you for your message. I will reply as soon as possible.",
+    "category": "phrase"
+  }
+];
+
+    const allCards = cards.map(item => ({ ...item }));
+    let filteredCards = [...allCards];
+    let currentIndex = 0;
+    let isFlipped = false;
+
+    const card = document.getElementById('card');
+    const cardFront = document.getElementById('card-front');
+    const cardBack = document.getElementById('card-back');
+    const categoryFilter = document.getElementById('category-filter');
+    const deckStatus = document.getElementById('deck-status');
+    const nextBtn = document.getElementById('next-btn');
+    const prevBtn = document.getElementById('prev-btn');
+    const shuffleBtn = document.getElementById('shuffle-btn');
+
+        function titleCaseCategory(value) {
+      return value
+        .replace(/_/g, ' ')
+        .split(' ')
+        .map((word) => word ? word[0].toUpperCase() + word.slice(1) : '')
+        .join(' ');
+    }
+
+    function resetCardFlip() {
+      isFlipped = false;
+      card.classList.remove('flip');
+    }
+
+    function updateButtons() {
+      const hasCards = filteredCards.length > 0;
+      nextBtn.disabled = !hasCards;
+      prevBtn.disabled = !hasCards;
+      shuffleBtn.disabled = filteredCards.length < 2;
+    }
+
+    function updateStatus(currentItem) {
+      const selectedLabel = categoryFilter.value === 'all'
+        ? 'All categories'
+        : titleCaseCategory(categoryFilter.value);
+
+      if (!filteredCards.length) {
+        deckStatus.textContent = `${selectedLabel} • 0 cards`;
+        return;
+      }
+
+      const currentCategory = currentItem ? titleCaseCategory(currentItem.category) : '';
+      deckStatus.textContent = `${selectedLabel} • Card ${currentIndex + 1} of ${filteredCards.length} • Current: ${currentCategory}`;
+    }
+
+    function updateCard() {
+      if (!filteredCards.length) {
+        cardFront.textContent = 'No cards found';
+        cardBack.innerHTML = '<strong>No cards match this category.</strong><br/><br/><small>Choose another category or switch back to All categories.</small>';
+        updateButtons();
+        updateStatus();
+        return;
+      }
+
+      const item = filteredCards[currentIndex];
+      cardFront.textContent = item.word;
+      cardBack.innerHTML = `<strong>${item.translation}</strong><br/><br/>` +
+        `<em>${item.example}</em><br/><small>${item.exampleTranslation}</small><br/><br/><small><strong>Category:</strong> ${titleCaseCategory(item.category)}</small>`;
+      updateButtons();
+      updateStatus(item);
+    }
+
+    function flipCard() {
+      if (!filteredCards.length) {
+        return;
+      }
+
+      isFlipped = !isFlipped;
+      if (isFlipped) {
+        card.classList.add('flip');
+      } else {
+        card.classList.remove('flip');
+      }
+    }
+
+    function nextCard() {
+      if (!filteredCards.length) {
+        return;
+      }
+
+      currentIndex = (currentIndex + 1) % filteredCards.length;
+      resetCardFlip();
+      updateCard();
+    }
+
+    function prevCard() {
+      if (!filteredCards.length) {
+        return;
+      }
+
+      currentIndex = (currentIndex - 1 + filteredCards.length) % filteredCards.length;
+      resetCardFlip();
+      updateCard();
+    }
+
+    function shuffleCards() {
+      if (filteredCards.length < 2) {
+        return;
+      }
+
+      for (let i = filteredCards.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [filteredCards[i], filteredCards[j]] = [filteredCards[j], filteredCards[i]];
+      }
+      currentIndex = 0;
+      resetCardFlip();
+      updateCard();
+    }
+
+    function applyCategoryFilter() {
+      const selectedCategory = categoryFilter.value;
+      filteredCards = selectedCategory === 'all'
+        ? [...allCards]
+        : allCards.filter((item) => item.category === selectedCategory);
+      currentIndex = 0;
+      resetCardFlip();
+      updateCard();
+    }
+
+    function populateCategoryFilter() {
+      const categories = [...new Set(allCards.map((item) => item.category))].sort();
+      categories.forEach((category) => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = titleCaseCategory(category);
+        categoryFilter.appendChild(option);
+      });
+    }
+
+    // Event listeners
+    card.addEventListener('click', flipCard);
+    nextBtn.addEventListener('click', nextCard);
+    prevBtn.addEventListener('click', prevCard);
+    shuffleBtn.addEventListener('click', shuffleCards);
+    categoryFilter.addEventListener('change', applyCategoryFilter);
+
+    // Initialize the interface
+    populateCategoryFilter();
+    updateCard();
+  </script>
+</body>
+</html>

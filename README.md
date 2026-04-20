@@ -18,9 +18,11 @@ This project was created quickly using LLMs to address my personal need: **Learn
 
 ## ▶️ How to Use
 
-1. Open the `index.html` file in any modern browser  
-2. Click or tap the card to reveal the translation and example  
-3. Use navigation buttons to browse or shuffle cards  
+1. Open the `index.html` file in any modern browser
+2. Click or tap the card to reveal the translation and example
+3. Use the **Category** filter to study all cards or only a specific type of vocabulary
+4. Use **Previous**, **Next**, and **Shuffle** to browse cards within the current selection
+5. Leave the filter on **All categories** to use the original full-deck behavior
 
 ## ⚠️ Notes
 
@@ -38,4 +40,3 @@ This project was created quickly using LLMs to address my personal need: **Learn
 - Add more vocabulary levels (A2 → B1)
 - Add spaced repetition
 - Add audio pronunciation
-- Turn into a full mobile-friendly app
