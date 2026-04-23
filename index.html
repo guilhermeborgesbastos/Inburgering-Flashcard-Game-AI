@@ -479,7 +479,7 @@
       }
 
       .progress-card {
-        flex-direction: column;
+        flex-direction: row;
         text-align: center;
       }
 
@@ -549,18 +549,6 @@
       </div>
     </div>
 
-    <!-- Card Container -->
-    <div id="card-container">
-      <div class="card" id="card">
-        <div class="card-side card-front" id="card-front"></div>
-        <div class="card-side card-back" id="card-back"></div>
-      </div>
-      <div class="card-tap-hint">
-        <span class="tap-icon">👆</span>
-        <span>Tap card to reveal meaning and phrase example.</span>
-      </div>
-    </div>
-
     <!-- Card Info -->
     <div class="card-info">
       <div class="card-info-item">
@@ -577,6 +565,31 @@
           <div class="card-info-value" id="remaining-cards">153 cards</div>
         </div>
       </div>
+    </div>
+
+    <!-- Card Container -->
+    <div id="card-container">
+      <div class="card" id="card">
+        <div class="card-side card-front" id="card-front"></div>
+        <div class="card-side card-back" id="card-back"></div>
+      </div>
+      <div class="card-tap-hint">
+        <span class="tap-icon">👆</span>
+        <span>Tap card to reveal meaning and phrase example.</span>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <button id="prev-btn">← Previous</button>
+      <button id="shuffle-btn">🔀 Shuffle</button>
+      <button id="next-btn">Next →</button>
+    </div>
+
+    <!-- Tip Section -->
+    <div class="tip-section">
+      <span class="tip-icon">💡</span>
+      <span id="tip-text">Tip: Use Shuffle to mix things up and improve retention.</span>
     </div>
 
     <!-- Audio Controls -->
@@ -600,19 +613,6 @@
         <input type="radio" name="speech-speed" value="slow">
         Slow (-50%)
       </label>
-    </div>
-
-    <!-- Controls -->
-    <div class="controls">
-      <button id="prev-btn">← Previous</button>
-      <button id="shuffle-btn">🔀 Shuffle</button>
-      <button id="next-btn">Next →</button>
-    </div>
-
-    <!-- Tip Section -->
-    <div class="tip-section">
-      <span class="tip-icon">💡</span>
-      <span id="tip-text">Tip: Use Shuffle to mix things up and improve retention.</span>
     </div>
   </div>
 
@@ -1957,12 +1957,20 @@
 
     function playWordPronunciation() {
       if (!filteredCards.length || isSpeaking) return;
+      // Ensure card is flipped back to show the front (word)
+      if (isFlipped) {
+        flipCard();
+      }
       const currentCard = filteredCards[currentIndex];
       speak(currentCard.word, true);
     }
 
     function playExamplePronunciation() {
       if (!filteredCards.length || isSpeaking) return;
+      // Ensure card is flipped to show the example
+      if (!isFlipped) {
+        flipCard();
+      }
       const currentCard = filteredCards[currentIndex];
       speak(currentCard.example, false);
     }
