@@ -13,6 +13,8 @@ This project was created quickly using LLMs to address my personal need: **Learn
 - Essential A1/A2 Dutch vocabulary
 - Example sentences for real usage
 - Simple flashcard interface (flip, next, previous, shuffle)
+- 🔊 **Dutch pronunciation playback** - Listen to native Dutch pronunciation of words and example sentences
+- Category filtering for targeted learning
 - Fully offline (single HTML file)
 - Works on desktop and tablet browsers
 
@@ -20,14 +22,16 @@ This project was created quickly using LLMs to address my personal need: **Learn
 
 1. Open the `index.html` file in any modern browser
 2. Click or tap the card to reveal the translation and example
-3. Use the **Category** filter to study all cards or only a specific type of vocabulary
-4. Use **Previous**, **Next**, and **Shuffle** to browse cards within the current selection
-5. Leave the filter on **All categories** to use the original full-deck behavior
+3. Use the **🔊 Pronounce Word** and **🔊 Pronounce Example** buttons to listen to native Dutch pronunciation
+4. Use the **Category** filter to study all cards or only a specific type of vocabulary
+5. Use **Previous**, **Next**, and **Shuffle** to browse cards within the current selection
+6. Leave the filter on **All categories** to use the original full-deck behavior
 
 ## ⚠️ Notes
 
 - On iPad/iOS, open via a browser (e.g., Chrome/Edge) or host it online  
-- On Safari Files preview will not execute JavaScript  
+- On Safari Files preview will not execute JavaScript
+- **Audio pronunciation** uses the browser's built-in text-to-speech engine (Web Speech API). Quality depends on your system's speech synthesis capabilities. Most modern browsers on desktop and mobile support this feature. For best results, use Chrome, Edge, or Firefox.
 
 ## 📦 Tech Stack
 
@@ -39,4 +43,5 @@ This project was created quickly using LLMs to address my personal need: **Learn
 
 - Add more vocabulary levels (A2 → B1)
 - Add spaced repetition
-- Add audio pronunciation
+- Add sentence rhythm and pronunciation tips
+- Add recorded native speaker audio samples

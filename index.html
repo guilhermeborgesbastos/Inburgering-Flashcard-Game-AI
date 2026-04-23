@@ -372,6 +372,51 @@
       flex-shrink: 0;
     }
 
+    .audio-controls {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+      max-width: 500px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    .audio-btn {
+      padding: 10px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      border: 2px solid #4a5cc4;
+      border-radius: 8px;
+      background-color: #fff;
+      color: #4a5cc4;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 140px;
+      justify-content: center;
+    }
+
+    .audio-btn:hover:not(:disabled) {
+      background-color: #f0f2ff;
+    }
+
+    .audio-btn:active:not(:disabled) {
+      transform: scale(0.98);
+    }
+
+    .audio-btn:disabled {
+      border-color: #d0d0d0;
+      color: #d0d0d0;
+      cursor: not-allowed;
+    }
+
+    .audio-btn.playing {
+      background-color: #4a5cc4;
+      color: #fff;
+    }
+
     footer {
       width: 100%;
       padding: 24px 20px;
@@ -506,6 +551,12 @@
           <div class="card-info-value" id="remaining-cards">153 cards</div>
         </div>
       </div>
+    </div>
+
+    <!-- Audio Controls -->
+    <div class="audio-controls">
+      <button id="play-word-btn" class="audio-btn">🔊 Pronounce Word</button>
+      <button id="play-example-btn" class="audio-btn">🔊 Pronounce Example</button>
     </div>
 
     <!-- Controls -->
@@ -1704,6 +1755,12 @@
     const progressPercentage = document.getElementById('progress-percentage');
     const progressCounter = document.getElementById('progress-counter');
     const progressBarFill = document.querySelector('.progress-bar-fill');
+    const playWordBtn = document.getElementById('play-word-btn');
+    const playExampleBtn = document.getElementById('play-example-btn');
+
+    // Speech synthesis setup
+    const synth = window.speechSynthesis;
+    let isSpeaking = false;
 
     function titleCaseCategory(value) {
       return value
@@ -1821,12 +1878,59 @@
       });
     }
 
+    function speak(text, isWord = false) {
+      // Cancel any ongoing speech
+      synth.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.lang = 'nl-NL'; // Dutch language
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      utterance.volume = 1;
+
+      const btn = isWord ? playWordBtn : playExampleBtn;
+
+      utterance.onstart = function() {
+        isSpeaking = true;
+        btn.classList.add('playing');
+        btn.disabled = true;
+      };
+
+      utterance.onend = function() {
+        isSpeaking = false;
+        btn.classList.remove('playing');
+        btn.disabled = false;
+      };
+
+      utterance.onerror = function() {
+        isSpeaking = false;
+        btn.classList.remove('playing');
+        btn.disabled = false;
+      };
+
+      synth.speak(utterance);
+    }
+
+    function playWordPronunciation() {
+      if (!filteredCards.length || isSpeaking) return;
+      const currentCard = filteredCards[currentIndex];
+      speak(currentCard.word, true);
+    }
+
+    function playExamplePronunciation() {
+      if (!filteredCards.length || isSpeaking) return;
+      const currentCard = filteredCards[currentIndex];
+      speak(currentCard.example, false);
+    }
+
     // Event listeners
     card.addEventListener('click', flipCard);
     nextBtn.addEventListener('click', nextCard);
     prevBtn.addEventListener('click', prevCard);
     shuffleBtn.addEventListener('click', shuffleCards);
     categoryFilter.addEventListener('change', applyCategoryFilter);
+    playWordBtn.addEventListener('click', playWordPronunciation);
+    playExampleBtn.addEventListener('click', playExamplePronunciation);
 
     // Initialize the interface
     populateCategoryFilter();
