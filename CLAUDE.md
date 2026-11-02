@@ -21,7 +21,7 @@ A static, no-build flashcard web app for Dutch inburgering (A1/A2) vocabulary. P
   ./scripts/deploy-s3.ps1 -DryRun
   ./scripts/deploy-s3.ps1 -BucketName inburgering -CloudFrontDistributionId <id>
   ```
-  Anything not excluded in `scripts/deploy-s3.ps1` gets published — add an `--exclude` there when introducing new non-site files.
+  Anything not excluded in `scripts/deploy-s3.ps1` gets published — add an `--exclude` there when introducing new non-site files. `index.html` is excluded from the sync and uploaded last with `Cache-Control: no-cache`, so new deploys show up without a CloudFront invalidation.
 - **Asset versions:** `index.html` loads `style.css` and `app.js` with `?v=<first 12 hex chars of the file's SHA-256>`. After editing either file, update its value (`sha256sum assets/js/app.js | cut -c1-12`); the deploy script refuses to run otherwise.
 
 ## Architecture
