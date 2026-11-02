@@ -1,1 +1,5 @@
 DEPLOY.md
+.idea/
+.claude/settings.json
+design/
+scripts/tests/
