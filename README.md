@@ -6,6 +6,12 @@
 
 **P.S:** The goal here is not to be the "state of art" on technical side but to address the problem in a pragmatic way ;)
 
+## 🎬 Demo
+
+<p align="center">
+  <img src=".github/assets/demo.gif" alt="Demo: revealing a card's meaning, playing Dutch pronunciation at 0.75× speed, swiping to the next word, filtering by the Phrase category and shuffling the deck" width="360">
+</p>
+
 ## 🎯 Purpose
 
 This project was created quickly using LLMs to address my personal need: **Learning Dutch vocabulary efficiently for the inburgering exam.**
@@ -16,20 +22,21 @@ This project was created quickly using LLMs to address my personal need: **Learn
 - Example sentences for real usage
 - Simple flashcard interface (flip, next, previous, shuffle)
 - 🔊 **Dutch pronunciation playback** - Listen to Dutch pronunciation with adjustable speed (Normal, Slower -25%, Slow -50%)
-- Category filtering for targeted learning
+- Category filtering for targeted learning, with the number of cards per category
+- Swipe gestures on touch screens and keyboard shortcuts on desktop
 - Loads flashcard data from `assets/data/cards.json`
-- Works on desktop and tablet browsers
+- Works on desktop, tablet and phone browsers
 - **Modular structure** - Clean separation of concerns for easy maintenance and deployment
 
 ## ▶️ How to Use
 
 1. Open the `index.html` file in any modern browser
-2. Click or tap the card to reveal the translation and phrase example
-3. Select your preferred **pronunciation speed** (Normal, Slower -25%, or Slow -50%)
-4. Use the **🔊 Pronounce Word** and **🔊 Pronounce Phrase** buttons to listen to Dutch pronunciation
-5. Use the **Category** filter to study all cards or only a specific type of vocabulary
-6. Use **Previous**, **Next**, and **Shuffle** to browse cards within the current selection
-7. Leave the filter on **All categories** to use the original full-deck behavior
+2. Tap the card or **Reveal meaning** to see the translation and an example sentence
+3. Select your preferred **pronunciation speed** (1×, 0.75× or 0.5×)
+4. Use the **🔊 Word** and **🔊 Phrase** buttons to listen to Dutch pronunciation
+5. Pick a **category** to study only one type of vocabulary, or **All** for the full deck
+6. Use **Previous**, **Next** and **Shuffle** to browse cards within the current selection
+7. On touch screens, swipe the card left or right; on desktop, press <kbd>Space</kbd> to flip and <kbd>←</kbd> <kbd>→</kbd> to move
 
 ## ⚠️ Notes
 

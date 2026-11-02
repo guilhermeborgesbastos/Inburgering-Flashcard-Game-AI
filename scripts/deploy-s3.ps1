@@ -14,6 +14,15 @@ if (-not (Get-Command aws -ErrorAction SilentlyContinue)) {
 $RepoRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 $Destination = "s3://$BucketName"
 
+# index.html must reference each asset by its current content hash, or returning browsers can mix old assets with new markup.
+$IndexHtml = Get-Content -Raw (Join-Path $RepoRoot "index.html")
+foreach ($Asset in @("assets/css/style.css", "assets/js/app.js")) {
+  $Hash = (Get-FileHash -Algorithm SHA256 (Join-Path $RepoRoot $Asset)).Hash.ToLower().Substring(0, 12)
+  if (-not $IndexHtml.Contains("${Asset}?v=$Hash")) {
+    throw "index.html references a stale version of $Asset. Set its ?v= value to $Hash before deploying."
+  }
+}
+
 $SyncArgs = @(
   "s3", "sync", $RepoRoot, $Destination,
   "--region", $Region,
@@ -26,7 +35,8 @@ $SyncArgs = @(
   "--exclude", "scripts/*",
   "--exclude", "CLAUDE.md",
   "--exclude", ".claude/*",
-  "--exclude", ".idea/*"
+  "--exclude", ".idea/*",
+  "--exclude", "design/*"
 )
 
 if ($DryRun) {

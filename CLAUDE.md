@@ -22,14 +22,15 @@ A static, no-build flashcard web app for Dutch inburgering (A1/A2) vocabulary. P
   ./scripts/deploy-s3.ps1 -BucketName inburgering -CloudFrontDistributionId <id>
   ```
   Anything not excluded in `scripts/deploy-s3.ps1` gets published — add an `--exclude` there when introducing new non-site files.
+- **Asset versions:** `index.html` loads `style.css` and `app.js` with `?v=<first 12 hex chars of the file's SHA-256>`. After editing either file, update its value (`sha256sum assets/js/app.js | cut -c1-12`); the deploy script refuses to run otherwise.
 
 ## Architecture
 
 Three files make up the app:
 
 - `index.html` — static markup with fixed element IDs that `app.js` binds to at load time; also contains the inline GA4 `gtag` snippet (`G-21RSDRNMG3`).
-- `assets/js/app.js` — all logic in a single global-scope script (no modules). State is a few top-level `let`s: `allCards`, `filteredCards`, `currentIndex`, `isFlipped`. Flow: `initializeApp()` → `loadCards()` (fetch + `normalizeCards`) → `populateCategoryFilter()` (derived from distinct `category` values, so new categories appear automatically) → `updateCard()`. Navigation, shuffle (Fisher–Yates on `filteredCards`), and category filtering all mutate `filteredCards`/`currentIndex` then call `updateCard()`, which re-renders the card and the progress UI. Pronunciation uses the Web Speech API (`speechSynthesis`, `lang = 'nl-NL'`); playing the word flips to the front, playing the phrase flips to the back. User interactions call `trackEvent()` for GA.
-- `assets/css/style.css` — single stylesheet; card flip is a CSS 3D transform toggled by the `.flip` class. The `html`/`body` height rules (`100dvh`, `-webkit-fill-available`, `overscroll-behavior-y`) are a deliberate fix for a bottom-of-page jump in Chrome on iPhone — don't "simplify" them back to `100vh`.
+- `assets/js/app.js` — all logic in a single global-scope script (no modules). State is a few top-level `let`s: `allCards`, `filteredCards`, `currentIndex`, `isFlipped`, `selectedCategory`. Flow: `initializeApp()` → `loadCards()` (fetch + `normalizeCards`) → `populateCategoryFilter()` (builds category chip buttons with counts from distinct `category` values, so new categories appear automatically) → `updateCard()`. Navigation, shuffle (Fisher–Yates on `filteredCards`), and category filtering all mutate `filteredCards`/`currentIndex` then call `updateCard()`, which rebuilds both card faces with `createElement`/`textContent` and updates progress. `resetCardFlip()` snaps back to the front with transitions disabled so the next card's meaning never shows mid-rotation; `updateFlipState()` keeps the `.flip` class, aria attributes and the Reveal button label in sync. Input: click/Enter/Space flips, ←/→ navigate, horizontal swipe on the card navigates (a click within 400ms of a swipe is ignored). Pronunciation uses the Web Speech API (`speechSynthesis`, `lang = 'nl-NL'`); playing the word flips to the front, playing the phrase flips to the back. Speed is native radio inputs styled as a segmented control. User interactions call `trackEvent()` for GA.
+- `assets/css/style.css` — single stylesheet driven by `:root` tokens (warm ivory / deep teal / burnt-orange accent; Fraunces for Dutch words and headings, Manrope for UI, loaded from Google Fonts in `index.html`). Card flip is a CSS 3D transform toggled by `.flip`, with a crossfade fallback under `prefers-reduced-motion`. Under 640px the category chips scroll horizontally and `.action-bar` (Previous / Reveal / Next) is sticky to the bottom. The `html`/`body` height rules (`100dvh`, `-webkit-fill-available`, `overscroll-behavior-y`) are a deliberate fix for a bottom-of-page jump in Chrome on iPhone — don't "simplify" them back to `100vh`.
 
 ## Card data (`assets/data/cards.json`)
 
@@ -41,7 +42,7 @@ Flat JSON array; every entry has exactly these string fields, in this key order,
 
 - `category` is lowercase snake_case (`verb`, `noun`, `adjective`, `pronoun`, `article`, `connector_and_adverb`, `phrase`, `daily_phrase`); displayed via `titleCaseCategory()`. Missing category falls back to `general`.
 - Nouns include their article in `word` (e.g. `de afspraak`). New entries are appended to the end; no IDs or ordering.
-- Card fields are injected with `innerHTML` unescaped, so avoid raw `<`/`&` in text.
+- Words or translations longer than `LONG_WORD_LENGTH` (22 chars) get a smaller `.is-long` type size; card faces have a fixed height and the back scrolls if content overflows.
 - `.claude/agent-memory/vocab-card-extender/` holds notes from a card-extending agent (schema, duplicate-detection pitfalls) — consult it before bulk-adding cards.
 
 ## Conventions

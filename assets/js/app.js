@@ -24,10 +24,13 @@ function trackPageView(path = window.location.pathname) {
 
 // Initialize state
 const DEFAULT_CATEGORY = 'general';
+const LONG_WORD_LENGTH = 22;
+const SWIPE_THRESHOLD = 50;
 let allCards = [];
 let filteredCards = [];
 let currentIndex = 0;
 let isFlipped = false;
+let selectedCategory = 'all';
 
 // DOM elements
 const card = document.getElementById('card');
@@ -37,16 +40,21 @@ const categoryFilter = document.getElementById('category-filter');
 const nextBtn = document.getElementById('next-btn');
 const prevBtn = document.getElementById('prev-btn');
 const shuffleBtn = document.getElementById('shuffle-btn');
-const currentCategoryElement = document.getElementById('current-category');
+const revealBtn = document.getElementById('reveal-btn');
 const remainingCardsElement = document.getElementById('remaining-cards');
 const progressPercentage = document.getElementById('progress-percentage');
 const progressCounter = document.getElementById('progress-counter');
+const progressBar = document.getElementById('progress-bar');
 const progressBarFill = document.querySelector('.progress-bar-fill');
+const tipText = document.getElementById('tip-text');
 const playWordBtn = document.getElementById('play-word-btn');
 const playExampleBtn = document.getElementById('play-example-btn');
 
 // Speech synthesis setup
 const synth = window.speechSynthesis;
+const speechSupported = Boolean(synth && typeof window.SpeechSynthesisUtterance === 'function');
+const audioStatus = document.getElementById('audio-status');
+let activeUtterance = null;
 let isSpeaking = false;
 let speechRate = 1; // Default: normal speed
 
@@ -58,16 +66,67 @@ function titleCaseCategory(value) {
     .join(' ');
 }
 
+function createElement(tag, className, text) {
+  const element = document.createElement(tag);
+  if (className) element.className = className;
+  if (typeof text !== 'undefined') element.textContent = text;
+  return element;
+}
+
+function updateFlipState() {
+  card.classList.toggle('flip', isFlipped);
+  cardFront.setAttribute('aria-hidden', String(isFlipped));
+  cardBack.setAttribute('aria-hidden', String(!isFlipped));
+  revealBtn.textContent = isFlipped ? 'Show word' : 'Reveal meaning';
+  // Name the button from its visible content so screen readers announce the vocabulary.
+  card.setAttribute('aria-labelledby', isFlipped ? 'card-back' : 'card-front');
+  card.setAttribute('aria-pressed', String(isFlipped));
+}
+
 function resetCardFlip() {
+  stopSpeech();
+  // Jump back to the front without animating, so the next card's meaning is never shown mid-rotation
+  card.classList.add('no-transition');
   isFlipped = false;
-  card.classList.remove('flip');
+  updateFlipState();
+  void card.offsetWidth;
+  card.classList.remove('no-transition');
+}
+
+function playEntryAnimation(direction) {
+  card.classList.remove('enter-next', 'enter-prev');
+  void card.offsetWidth;
+  card.classList.add(direction === 'prev' ? 'enter-prev' : 'enter-next');
 }
 
 function updateButtons() {
   const hasCards = filteredCards.length > 0;
   nextBtn.disabled = !hasCards;
   prevBtn.disabled = !hasCards;
+  revealBtn.disabled = !hasCards;
   shuffleBtn.disabled = filteredCards.length < 2;
+  playWordBtn.disabled = !hasCards || !speechSupported || isSpeaking;
+  playExampleBtn.disabled = !hasCards || !speechSupported || isSpeaking;
+}
+
+function setProgress(position, total) {
+  const percentage = total ? Math.round(position / total * 100) : 0;
+  progressPercentage.textContent = percentage + '%';
+  progressCounter.textContent = `${position} / ${total} cards`;
+  progressBarFill.style.width = percentage + '%';
+  progressBar.setAttribute('aria-valuenow', String(percentage));
+  remainingCardsElement.textContent = `${Math.max(total - position, 0)} cards`;
+}
+
+function renderMessage(title, detail) {
+  cardFront.replaceChildren(
+    createElement('p', 'card-message', title),
+    createElement('p', 'card-message-detail', detail)
+  );
+  cardBack.replaceChildren(
+    createElement('p', 'card-message', title),
+    createElement('p', 'card-message-detail', detail)
+  );
 }
 
 function normalizeCards(cards) {
@@ -93,43 +152,52 @@ async function loadCards() {
 }
 
 function showLoadError(error) {
-  isFlipped = true;
-  card.classList.add('flip');
-  cardFront.textContent = 'Could not load cards';
-  cardBack.innerHTML = `<strong>${error.message}</strong><br/><br/><small>Make sure assets/data/cards.json is available from the same site.</small>`;
-  currentCategoryElement.textContent = '-';
-  remainingCardsElement.textContent = '0 cards';
-  progressPercentage.textContent = '0%';
-  progressCounter.textContent = '0 / 0 cards';
-  progressBarFill.style.width = '0%';
+  isFlipped = false;
+  updateFlipState();
+  renderMessage('Could not load cards', `${error.message}. Make sure assets/data/cards.json is available from the same site.`);
+  setProgress(0, 0);
   updateButtons();
 }
 
 function updateCard() {
   if (!filteredCards.length) {
-    cardFront.textContent = 'No cards found';
-    cardBack.innerHTML = '<strong>No cards match this category.</strong><br/><br/><small>Choose another category or switch back to All categories.</small>';
-    currentCategoryElement.textContent = '-';
-    remainingCardsElement.textContent = '0 cards';
+    renderMessage('No cards found', 'No cards match this category. Choose another category or switch back to All.');
+    setProgress(0, 0);
     updateButtons();
     return;
   }
 
   const item = filteredCards[currentIndex];
-  cardFront.textContent = item.word;
-  cardBack.innerHTML = `<strong>${item.translation}</strong><br/><br/>` +
-    `<em>${item.example}</em><br/><small>${item.exampleTranslation}</small>`;
-  
-  // Update card info
-  currentCategoryElement.textContent = titleCaseCategory(item.category);
-  remainingCardsElement.textContent = `${filteredCards.length - currentIndex - 1} cards`;
-  
-  // Update progress
-  const percentage = Math.round((currentIndex + 1) / filteredCards.length * 100);
-  progressPercentage.textContent = percentage + '%';
-  progressCounter.textContent = `${currentIndex + 1} / ${filteredCards.length} cards`;
-  progressBarFill.style.width = percentage + '%';
-  
+  const category = titleCaseCategory(item.category);
+
+  const word = createElement('p', 'card-word', item.word);
+  word.lang = 'nl';
+  word.classList.toggle('is-long', item.word.length > LONG_WORD_LENGTH);
+  cardFront.replaceChildren(
+    createElement('span', 'card-tag', category),
+    word,
+    createElement('span', 'card-hint', 'Tap to reveal meaning')
+  );
+
+  const exampleNl = createElement('p', 'example-nl', item.example);
+  exampleNl.lang = 'nl';
+  const example = createElement('div', 'card-example');
+  example.append(
+    createElement('span', 'card-label', 'Example'),
+    exampleNl,
+    createElement('p', 'example-en', item.exampleTranslation)
+  );
+  const translation = createElement('p', 'card-translation', item.translation);
+  translation.classList.toggle('is-long', item.translation.length > LONG_WORD_LENGTH);
+  cardBack.replaceChildren(
+    createElement('span', 'card-tag', category),
+    createElement('span', 'card-label', 'Meaning'),
+    translation,
+    example
+  );
+  cardBack.scrollTop = 0;
+
+  setProgress(currentIndex + 1, filteredCards.length);
   updateButtons();
 }
 
@@ -139,11 +207,9 @@ function flipCard() {
   }
 
   isFlipped = !isFlipped;
+  updateFlipState();
   if (isFlipped) {
-    card.classList.add('flip');
     trackEvent('flip_card', 'Flashcard', filteredCards[currentIndex]?.word || 'unknown');
-  } else {
-    card.classList.remove('flip');
   }
 }
 
@@ -155,6 +221,7 @@ function nextCard() {
   currentIndex = (currentIndex + 1) % filteredCards.length;
   resetCardFlip();
   updateCard();
+  playEntryAnimation('next');
   trackEvent('next_card', 'Flashcard', filteredCards[currentIndex]?.word || 'unknown');
 }
 
@@ -166,6 +233,7 @@ function prevCard() {
   currentIndex = (currentIndex - 1 + filteredCards.length) % filteredCards.length;
   resetCardFlip();
   updateCard();
+  playEntryAnimation('prev');
   trackEvent('previous_card', 'Flashcard', filteredCards[currentIndex]?.word || 'unknown');
 }
 
@@ -181,61 +249,102 @@ function shuffleCards() {
   currentIndex = 0;
   resetCardFlip();
   updateCard();
+  playEntryAnimation('next');
   trackEvent('shuffle_deck', 'Flashcard', `shuffle_${filteredCards.length}`);
 }
 
 function applyCategoryFilter() {
-  const selectedCategory = categoryFilter.value;
   filteredCards = selectedCategory === 'all'
     ? [...allCards]
     : allCards.filter((item) => item.category === selectedCategory);
   currentIndex = 0;
   resetCardFlip();
   updateCard();
+  playEntryAnimation('next');
   trackEvent('filter_category', 'Flashcard', titleCaseCategory(selectedCategory));
 }
 
+function createCategoryChip(value, label, count) {
+  const chip = createElement('button', 'chip');
+  chip.type = 'button';
+  chip.dataset.category = value;
+  chip.setAttribute('aria-pressed', String(value === selectedCategory));
+  chip.append(createElement('span', '', label), createElement('span', 'chip-count', String(count)));
+  return chip;
+}
+
 function populateCategoryFilter() {
-  const categories = [...new Set(allCards.map((item) => item.category))].sort();
-  categories.forEach((category) => {
-    const option = document.createElement('option');
-    option.value = category;
-    option.textContent = titleCaseCategory(category);
-    categoryFilter.appendChild(option);
+  const counts = allCards.reduce((acc, item) => {
+    acc[item.category] = (acc[item.category] || 0) + 1;
+    return acc;
+  }, {});
+  const categories = Object.keys(counts).sort();
+  categoryFilter.replaceChildren(
+    createCategoryChip('all', 'All', allCards.length),
+    ...categories.map((category) => createCategoryChip(category, titleCaseCategory(category), counts[category]))
+  );
+}
+
+function selectCategory(event) {
+  const chip = event.target.closest('.chip');
+  if (!chip || chip.dataset.category === selectedCategory) return;
+
+  selectedCategory = chip.dataset.category;
+  categoryFilter.querySelectorAll('.chip').forEach((item) => {
+    item.setAttribute('aria-pressed', String(item === chip));
   });
+  chip.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
+  applyCategoryFilter();
+}
+
+function setAudioStatus(message) {
+  audioStatus.textContent = message;
+  audioStatus.hidden = !message;
+}
+
+function stopSpeech() {
+  // Clear our state before cancellation: some browsers deliver a late error/end event.
+  activeUtterance = null;
+  isSpeaking = false;
+  if (speechSupported) synth.cancel();
+  playWordBtn.classList.remove('playing');
+  playExampleBtn.classList.remove('playing');
+  updateButtons();
 }
 
 function speak(text, isWord = false) {
-  // Cancel any ongoing speech
-  synth.cancel();
-
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'nl-NL'; // Dutch language
-  utterance.rate = speechRate;
-  utterance.pitch = 1;
-  utterance.volume = 1;
-
+  if (!speechSupported || isSpeaking) return;
+  stopSpeech();
+  setAudioStatus('');
   const btn = isWord ? playWordBtn : playExampleBtn;
 
-  utterance.onstart = function() {
+  try {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'nl-NL';
+    utterance.rate = speechRate;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+    activeUtterance = utterance;
+    // Lock both controls immediately, before the asynchronous start event.
     isSpeaking = true;
     btn.classList.add('playing');
-    btn.disabled = true;
-  };
+    updateButtons();
 
-  utterance.onend = function() {
-    isSpeaking = false;
-    btn.classList.remove('playing');
-    btn.disabled = false;
-  };
-
-  utterance.onerror = function() {
-    isSpeaking = false;
-    btn.classList.remove('playing');
-    btn.disabled = false;
-  };
-
-  synth.speak(utterance);
+    const finish = (failed = false) => {
+      if (activeUtterance !== utterance) return;
+      activeUtterance = null;
+      isSpeaking = false;
+      btn.classList.remove('playing');
+      updateButtons();
+      if (failed) setAudioStatus('Pronunciation could not play. Please try again or use another browser.');
+    };
+    utterance.onend = () => finish();
+    utterance.onerror = () => finish(true);
+    synth.speak(utterance);
+  } catch (error) {
+    stopSpeech();
+    setAudioStatus('Pronunciation could not play. Please try again or use another browser.');
+  }
 }
 
 function playWordPronunciation() {
@@ -258,14 +367,80 @@ function playExamplePronunciation() {
   speak(currentCard.example, false);
 }
 
+// Swipe left/right on the card to navigate; a tap still flips it
+let touchStart = null;
+let lastSwipeAt = 0;
+
+function handleTouchStart(event) {
+  const touch = event.changedTouches[0];
+  touchStart = { x: touch.clientX, y: touch.clientY };
+}
+
+function handleTouchEnd(event) {
+  if (!touchStart) return;
+  const touch = event.changedTouches[0];
+  const dx = touch.clientX - touchStart.x;
+  const dy = touch.clientY - touchStart.y;
+  touchStart = null;
+
+  if (Math.abs(dx) > SWIPE_THRESHOLD && Math.abs(dx) > Math.abs(dy) * 1.5) {
+    lastSwipeAt = Date.now();
+    if (dx < 0) {
+      nextCard();
+    } else {
+      prevCard();
+    }
+  }
+}
+
+function handleCardClick() {
+  if (Date.now() - lastSwipeAt < 400) return;
+  flipCard();
+}
+
+function handleCardKeydown(event) {
+  if (event.key === 'Enter' || event.key === ' ') {
+    event.preventDefault();
+    flipCard();
+  }
+}
+
+function handleGlobalKeydown(event) {
+  if (event.altKey || event.ctrlKey || event.metaKey || event.target.closest('input, select, textarea')) return;
+
+  if (event.key === 'ArrowRight') {
+    event.preventDefault();
+    nextCard();
+  } else if (event.key === 'ArrowLeft') {
+    event.preventDefault();
+    prevCard();
+  } else if (event.key === ' ' && event.target === document.body) {
+    event.preventDefault();
+    flipCard();
+  }
+}
+
+function showInteractionTip() {
+  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+    tipText.innerHTML = 'Tip: <kbd>Space</kbd> flips the card, <kbd>←</kbd> <kbd>→</kbd> move between words.';
+  } else {
+    tipText.textContent = 'Tip: Swipe the card left or right to move between words.';
+  }
+}
+
 // Event listeners
-card.addEventListener('click', flipCard);
+card.addEventListener('click', handleCardClick);
+card.addEventListener('keydown', handleCardKeydown);
+card.addEventListener('touchstart', handleTouchStart, { passive: true });
+card.addEventListener('touchend', handleTouchEnd);
+revealBtn.addEventListener('click', flipCard);
 nextBtn.addEventListener('click', nextCard);
 prevBtn.addEventListener('click', prevCard);
 shuffleBtn.addEventListener('click', shuffleCards);
-categoryFilter.addEventListener('change', applyCategoryFilter);
+categoryFilter.addEventListener('click', selectCategory);
 playWordBtn.addEventListener('click', playWordPronunciation);
 playExampleBtn.addEventListener('click', playExamplePronunciation);
+document.addEventListener('keydown', handleGlobalKeydown);
 
 // Speed control listeners
 document.querySelectorAll('input[name="speech-speed"]').forEach(radio => {
@@ -281,6 +456,10 @@ document.querySelectorAll('input[name="speech-speed"]').forEach(radio => {
 });
 
 async function initializeApp() {
+  showInteractionTip();
+  updateFlipState();
+  updateButtons();
+  if (!speechSupported) setAudioStatus('Pronunciation is not supported in this browser. You can still study the cards.');
   try {
     await loadCards();
     populateCategoryFilter();
@@ -295,4 +474,3 @@ initializeApp();
 window.addEventListener('load', () => {
   trackPageView();
 });
-
