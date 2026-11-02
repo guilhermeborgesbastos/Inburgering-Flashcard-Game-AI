@@ -141,7 +141,7 @@ function saveProgress() {
       decks
     }));
   } catch (error) {
-    // Storage can be unavailable (private mode, quota); the app keeps working without it.
+    console.error(`[Flashcards] Could not save study progress to localStorage ("${STORAGE_KEY}"); progress will be lost when the page is closed.`, error);
   }
 }
 
