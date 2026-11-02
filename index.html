@@ -16,118 +16,125 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Inburgering Dutch Vocabulary Flashcards</title>
+  <meta name="description" content="Free flashcards for the Dutch inburgering exam (A1/A2): essential words with English translations, example sentences and Dutch pronunciation.">
+  <meta name="theme-color" content="#fbf7f0">
   <link rel="icon" href="assets/img/favicon.ico" type="image/x-icon">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,400&family=Manrope:wght@400;500;600;700&display=swap">
   <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-  <header>
-    <div class="header-center">
-      <div class="app-icon">📖</div>
-      <div class="app-title-text">
+  <header class="site-header">
+    <div class="brand">
+      <span class="brand-mark" aria-hidden="true">
+        <svg viewBox="0 0 32 32" width="32" height="32">
+          <rect x="9" y="5" width="18" height="22" rx="4" fill="#f28c38" transform="rotate(10 18 16)"/>
+          <rect x="5" y="6" width="18" height="22" rx="4" fill="#0f4c4d"/>
+          <path d="M10 13h8M10 18h5" stroke="#fbf7f0" stroke-width="2" stroke-linecap="round"/>
+        </svg>
+      </span>
+      <div class="brand-text">
         <h1>Inburgering Dutch</h1>
-        <p>Vocabulary Flashcards</p>
+        <p>A1–A2 vocabulary flashcards</p>
       </div>
     </div>
+    <a class="header-link" href="https://github.com/guilhermeborgesbastos/Inburgering-Flashcard-Game-AI" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.15-1.11-1.46-1.11-1.46-.91-.62.07-.6.07-.6 1 .07 1.53 1.03 1.53 1.03.9 1.52 2.34 1.08 2.91.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.64 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.37.2 2.39.1 2.64.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"/></svg>
+      <span>GitHub</span>
+    </a>
   </header>
 
-  <div class="main-content">
-    <!-- Study Progress Card -->
-    <div class="progress-card">
-      <div class="progress-circle">
-        <span class="progress-text" id="progress-percentage">7%</span>
+  <main class="main-content">
+    <!-- Progress -->
+    <section class="progress-panel" aria-label="Study progress">
+      <div class="progress-row">
+        <div class="progress-stats">
+          <span class="progress-counter" id="progress-counter">0 / 0 cards</span>
+          <span class="progress-remaining"><span id="remaining-cards">0 cards</span> left</span>
+        </div>
+        <span class="progress-percentage" id="progress-percentage">0%</span>
+        <button id="shuffle-btn" class="btn btn-ghost" type="button" disabled>
+          <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M16 3h5v5M4 20 21 3M21 16v5h-5M15 15l6 6M4 4l5 5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span>Shuffle</span>
+        </button>
       </div>
-      <div class="progress-info">
-        <div class="progress-title">Study Progress</div>
-        <div class="progress-counter" id="progress-counter">12 / 165 cards</div>
-        <div class="progress-bar">
-          <div class="progress-bar-fill"></div>
+      <div class="progress-bar" id="progress-bar" role="progressbar" aria-label="Position in deck" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+        <div class="progress-bar-fill"></div>
+      </div>
+    </section>
+
+    <!-- Category filter (chips are generated from the card data) -->
+    <nav class="category-filter" id="category-filter" aria-label="Filter by category"></nav>
+
+    <!-- Flashcard -->
+    <section class="study" aria-label="Flashcard">
+      <div class="card-stage">
+        <div class="card" id="card" role="button" tabindex="0" aria-live="polite">
+          <div class="card-side card-front" id="card-front">
+            <span class="card-skeleton" aria-hidden="true"></span>
+            <span class="card-hint">Loading cards…</span>
+          </div>
+          <div class="card-side card-back" id="card-back" aria-hidden="true"></div>
         </div>
       </div>
-    </div>
 
-    <!-- Category Filter -->
-    <div class="category-filter-container">
-      <div class="category-filter-wrapper">
-        <span class="filter-icon">🏷️</span>
-        <select id="category-filter">
-          <option value="all">All categories</option>
-        </select>
-      </div>
-    </div>
-
-    <!-- Card Info -->
-    <div class="card-info">
-      <div class="card-info-item">
-        <span class="card-info-icon">📄</span>
-        <div>
-          <div class="card-info-label">Category</div>
-          <div class="card-info-value" id="current-category">Noun</div>
+      <!-- Pronunciation -->
+      <div class="listen-bar">
+        <div class="listen-buttons">
+          <button id="play-word-btn" class="btn btn-soft audio-btn" type="button">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5ZM15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Word</span>
+          </button>
+          <button id="play-example-btn" class="btn btn-soft audio-btn" type="button">
+            <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M11 5 6 9H3v6h3l5 4V5ZM15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span>Phrase</span>
+          </button>
         </div>
+        <fieldset class="speed-control">
+          <legend class="visually-hidden">Pronunciation speed</legend>
+          <span class="speed-label" aria-hidden="true">Speed</span>
+          <label title="Normal speed">
+            <input type="radio" name="speech-speed" value="normal" checked>
+            <span>1×</span>
+          </label>
+          <label title="Slower (-25%)">
+            <input type="radio" name="speech-speed" value="slower">
+            <span>0.75×</span>
+          </label>
+          <label title="Slow (-50%)">
+            <input type="radio" name="speech-speed" value="slow">
+            <span>0.5×</span>
+          </label>
+        </fieldset>
       </div>
-      <div class="card-info-item">
-        <span class="card-info-icon">📚</span>
-        <div>
-          <div class="card-info-label">Remaining</div>
-          <div class="card-info-value" id="remaining-cards">153 cards</div>
-        </div>
-      </div>
-    </div>
 
-    <!-- Card Container -->
-    <div id="card-container">
-      <div class="card" id="card">
-        <div class="card-side card-front" id="card-front"></div>
-        <div class="card-side card-back" id="card-back"></div>
+      <!-- Primary study controls -->
+      <div class="action-bar">
+        <button id="prev-btn" class="btn btn-nav" type="button" aria-label="Previous card" disabled>
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="m15 18-6-6 6-6" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span class="btn-nav-text">Previous</span>
+        </button>
+        <button id="reveal-btn" class="btn btn-primary" type="button" disabled>Reveal meaning</button>
+        <button id="next-btn" class="btn btn-nav" type="button" aria-label="Next card" disabled>
+          <span class="btn-nav-text">Next</span>
+          <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="m9 18 6-6-6-6" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
       </div>
-      <div class="card-tap-hint">
-        <span class="tap-icon">👆</span>
-        <span>Tap card to reveal meaning and phrase example.</span>
-      </div>
-    </div>
+    </section>
 
-    <!-- Controls -->
-    <div class="controls">
-      <button id="prev-btn">← Previous</button>
-      <button id="shuffle-btn">🔀 Shuffle</button>
-      <button id="next-btn">Next →</button>
-    </div>
-
-    <!-- Tip Section -->
-    <div class="tip-section">
-      <span class="tip-icon">💡</span>
+    <p class="tip-section">
+      <span class="tip-icon" aria-hidden="true">💡</span>
       <span id="tip-text">Tip: Use Shuffle to mix things up and improve retention.</span>
-    </div>
+    </p>
+  </main>
 
-    <!-- Audio Controls -->
-    <div class="audio-controls">
-      <button id="play-word-btn" class="audio-btn">🔊 Pronounce Word</button>
-      <button id="play-example-btn" class="audio-btn">🔊 Pronounce Phrase</button>
-    </div>
-
-    <!-- Speed Control -->
-    <div class="speed-control">
-      <span>Pronunciation speed:</span>
-      <label>
-        <input type="radio" name="speech-speed" value="normal" checked>
-        Normal
-      </label>
-      <label>
-        <input type="radio" name="speech-speed" value="slower">
-        Slower (-25%)
-      </label>
-      <label>
-        <input type="radio" name="speech-speed" value="slow">
-        Slow (-50%)
-      </label>
-    </div>
-  </div>
-
-  <footer>
-    <a href="https://github.com/guilhermeborgesbastos/Inburgering-Flashcard-Game-AI" target="_blank">
-      View on GitHub
-    </a>
+  <footer class="site-footer">
+    <p>Built for learners preparing the inburgering exam ·
+      <a href="https://github.com/guilhermeborgesbastos/Inburgering-Flashcard-Game-AI" target="_blank" rel="noopener">View on GitHub</a>
+    </p>
   </footer>
 
   <!-- Google tag (gtag.js) -->
