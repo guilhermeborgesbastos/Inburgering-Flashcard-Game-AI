@@ -23,7 +23,10 @@ $SyncArgs = @(
   "--exclude", "README.md",
   "--exclude", "DEPLOY.md",
   "--exclude", ".gitignore",
-  "--exclude", "scripts/*"
+  "--exclude", "scripts/*",
+  "--exclude", "CLAUDE.md",
+  "--exclude", ".claude/*",
+  "--exclude", ".idea/*"
 )
 
 if ($DryRun) {
