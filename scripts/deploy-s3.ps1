@@ -36,15 +36,35 @@ $SyncArgs = @(
   "--exclude", "CLAUDE.md",
   "--exclude", ".claude/*",
   "--exclude", ".idea/*",
-  "--exclude", "design/*"
+  "--exclude", "design/*",
+  # Uploaded separately below with a no-cache header.
+  "--exclude", "index.html"
+)
+
+# index.html goes last with "no-cache", so CloudFront and browsers revalidate it on every visit and pick up
+# new deploys immediately; the CSS/JS it references are versioned by content hash and can stay cached.
+$IndexArgs = @(
+  "s3", "cp", (Join-Path $RepoRoot "index.html"), "$Destination/index.html",
+  "--region", $Region,
+  "--cache-control", "no-cache",
+  "--content-type", "text/html; charset=utf-8"
 )
 
 if ($DryRun) {
   $SyncArgs += "--dryrun"
+  $IndexArgs += "--dryrun"
 }
 
 Write-Host "Deploying $RepoRoot to $Destination..."
 aws @SyncArgs
+if ($LASTEXITCODE -ne 0) {
+  throw "Syncing assets to $Destination failed; index.html was not updated."
+}
+
+aws @IndexArgs
+if ($LASTEXITCODE -ne 0) {
+  throw "Uploading index.html to $Destination failed."
+}
 
 if ($CloudFrontDistributionId -and -not $DryRun) {
   Write-Host "Creating CloudFront invalidation for distribution $CloudFrontDistributionId..."
