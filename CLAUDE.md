@@ -23,7 +23,6 @@ A static, no-build flashcard web app for Dutch inburgering (A1/A2) vocabulary. P
   ```
   Anything not excluded in `scripts/deploy-s3.ps1` gets published — add an `--exclude` there when introducing new non-site files.
 - **Asset versions:** `index.html` loads `style.css` and `app.js` with `?v=<first 12 hex chars of the file's SHA-256>`. After editing either file, update its value (`sha256sum assets/js/app.js | cut -c1-12`); the deploy script refuses to run otherwise.
-- **Regression tests:** serve the repo root and open `/scripts/tests/regression.html` (mocked speech, real markup/CSS/data; also verifies the asset versions). See `scripts/tests/README.md`.
 
 ## Architecture
 
