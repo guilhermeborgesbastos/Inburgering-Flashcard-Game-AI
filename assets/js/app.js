@@ -52,6 +52,9 @@ const playExampleBtn = document.getElementById('play-example-btn');
 
 // Speech synthesis setup
 const synth = window.speechSynthesis;
+const speechSupported = Boolean(synth && typeof window.SpeechSynthesisUtterance === 'function');
+const audioStatus = document.getElementById('audio-status');
+let activeUtterance = null;
 let isSpeaking = false;
 let speechRate = 1; // Default: normal speed
 
@@ -75,10 +78,13 @@ function updateFlipState() {
   cardFront.setAttribute('aria-hidden', String(isFlipped));
   cardBack.setAttribute('aria-hidden', String(!isFlipped));
   revealBtn.textContent = isFlipped ? 'Show word' : 'Reveal meaning';
-  card.setAttribute('aria-label', isFlipped ? 'Flashcard, meaning side. Activate to show the word.' : 'Flashcard, word side. Activate to reveal the meaning.');
+  // Name the button from its visible content so screen readers announce the vocabulary.
+  card.setAttribute('aria-labelledby', isFlipped ? 'card-back' : 'card-front');
+  card.setAttribute('aria-pressed', String(isFlipped));
 }
 
 function resetCardFlip() {
+  stopSpeech();
   // Jump back to the front without animating, so the next card's meaning is never shown mid-rotation
   card.classList.add('no-transition');
   isFlipped = false;
@@ -99,10 +105,8 @@ function updateButtons() {
   prevBtn.disabled = !hasCards;
   revealBtn.disabled = !hasCards;
   shuffleBtn.disabled = filteredCards.length < 2;
-  if (!isSpeaking) {
-    playWordBtn.disabled = !hasCards;
-    playExampleBtn.disabled = !hasCards;
-  }
+  playWordBtn.disabled = !hasCards || !speechSupported || isSpeaking;
+  playExampleBtn.disabled = !hasCards || !speechSupported || isSpeaking;
 }
 
 function setProgress(position, total) {
@@ -293,37 +297,54 @@ function selectCategory(event) {
   applyCategoryFilter();
 }
 
+function setAudioStatus(message) {
+  audioStatus.textContent = message;
+  audioStatus.hidden = !message;
+}
+
+function stopSpeech() {
+  // Clear our state before cancellation: some browsers deliver a late error/end event.
+  activeUtterance = null;
+  isSpeaking = false;
+  if (speechSupported) synth.cancel();
+  playWordBtn.classList.remove('playing');
+  playExampleBtn.classList.remove('playing');
+  updateButtons();
+}
+
 function speak(text, isWord = false) {
-  // Cancel any ongoing speech
-  synth.cancel();
-
-  const utterance = new SpeechSynthesisUtterance(text);
-  utterance.lang = 'nl-NL'; // Dutch language
-  utterance.rate = speechRate;
-  utterance.pitch = 1;
-  utterance.volume = 1;
-
+  if (!speechSupported || isSpeaking) return;
+  stopSpeech();
+  setAudioStatus('');
   const btn = isWord ? playWordBtn : playExampleBtn;
 
-  utterance.onstart = function() {
+  try {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'nl-NL';
+    utterance.rate = speechRate;
+    utterance.pitch = 1;
+    utterance.volume = 1;
+    activeUtterance = utterance;
+    // Lock both controls immediately, before the asynchronous start event.
     isSpeaking = true;
     btn.classList.add('playing');
-    btn.disabled = true;
-  };
+    updateButtons();
 
-  utterance.onend = function() {
-    isSpeaking = false;
-    btn.classList.remove('playing');
-    btn.disabled = false;
-  };
-
-  utterance.onerror = function() {
-    isSpeaking = false;
-    btn.classList.remove('playing');
-    btn.disabled = false;
-  };
-
-  synth.speak(utterance);
+    const finish = (failed = false) => {
+      if (activeUtterance !== utterance) return;
+      activeUtterance = null;
+      isSpeaking = false;
+      btn.classList.remove('playing');
+      updateButtons();
+      if (failed) setAudioStatus('Pronunciation could not play. Please try again or use another browser.');
+    };
+    utterance.onend = () => finish();
+    utterance.onerror = () => finish(true);
+    synth.speak(utterance);
+  } catch (error) {
+    stopSpeech();
+    setAudioStatus('Pronunciation could not play. Please try again or use another browser.');
+  }
 }
 
 function playWordPronunciation() {
@@ -437,6 +458,8 @@ document.querySelectorAll('input[name="speech-speed"]').forEach(radio => {
 async function initializeApp() {
   showInteractionTip();
   updateFlipState();
+  updateButtons();
+  if (!speechSupported) setAudioStatus('Pronunciation is not supported in this browser. You can still study the cards.');
   try {
     await loadCards();
     populateCategoryFilter();
