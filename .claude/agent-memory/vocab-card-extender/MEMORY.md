@@ -1,1 +1,1 @@
-- [cards.json Schema & Category Taxonomy](project-cards-schema.md) — flat JSON array, 5 required string fields, 8 known categories, 2-space indent, append-only
+- [cards.json Schema & Category Taxonomy](project-cards-schema.md) — flat JSON array, 5 required string fields, 8 categories (431 cards as of 2026-11-02), 2-space indent, append-only

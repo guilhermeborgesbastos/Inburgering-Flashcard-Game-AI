@@ -2413,5 +2413,607 @@
     "example": "Schrijf een briefje en vertel wat zij moet doen.",
     "exampleTranslation": "Write a note and tell what she has to do.",
     "category": "phrase"
+  },
+  {
+    "word": "eten",
+    "translation": "to eat",
+    "example": "Wij eten om zes uur samen aan tafel.",
+    "exampleTranslation": "We eat together at the table at six o'clock.",
+    "category": "verb"
+  },
+  {
+    "word": "drinken",
+    "translation": "to drink",
+    "example": "Ik drink 's ochtends altijd een kopje koffie.",
+    "exampleTranslation": "I always drink a cup of coffee in the morning.",
+    "category": "verb"
+  },
+  {
+    "word": "slapen",
+    "translation": "to sleep",
+    "example": "Ik slaap slecht omdat ik pijn heb.",
+    "exampleTranslation": "I sleep badly because I am in pain.",
+    "category": "verb"
+  },
+  {
+    "word": "koken",
+    "translation": "to cook",
+    "example": "Mijn man kookt vanavond voor de hele familie.",
+    "exampleTranslation": "My husband is cooking for the whole family tonight.",
+    "category": "verb"
+  },
+  {
+    "word": "fietsen",
+    "translation": "to cycle",
+    "example": "Mijn kinderen fietsen elke dag naar school.",
+    "exampleTranslation": "My children cycle to school every day.",
+    "category": "verb"
+  },
+  {
+    "word": "lopen",
+    "translation": "to walk",
+    "example": "Ik loop tien minuten naar de bushalte.",
+    "exampleTranslation": "I walk ten minutes to the bus stop.",
+    "category": "verb"
+  },
+  {
+    "word": "nemen",
+    "translation": "to take",
+    "example": "Neem twee keer per dag een tablet.",
+    "exampleTranslation": "Take a tablet twice a day.",
+    "category": "verb"
+  },
+  {
+    "word": "geven",
+    "translation": "to give",
+    "example": "Kunt u mij uw paspoort geven?",
+    "exampleTranslation": "Could you give me your passport?",
+    "category": "verb"
+  },
+  {
+    "word": "krijgen",
+    "translation": "to receive, to get",
+    "example": "U krijgt binnen twee weken een brief van de gemeente.",
+    "exampleTranslation": "You will receive a letter from the municipality within two weeks.",
+    "category": "verb"
+  },
+  {
+    "word": "weten",
+    "translation": "to know (a fact)",
+    "example": "Ik weet niet hoe laat de winkel opengaat.",
+    "exampleTranslation": "I don't know what time the shop opens.",
+    "category": "verb"
+  },
+  {
+    "word": "kennen",
+    "translation": "to know (a person or place)",
+    "example": "Ik ken mijn buren nog niet goed.",
+    "exampleTranslation": "I don't know my neighbours well yet.",
+    "category": "verb"
+  },
+  {
+    "word": "verhuizen",
+    "translation": "to move (house)",
+    "example": "Wij verhuizen volgende maand naar Utrecht.",
+    "exampleTranslation": "We are moving to Utrecht next month.",
+    "category": "verb"
+  },
+  {
+    "word": "huren",
+    "translation": "to rent",
+    "example": "Wij huren een appartement in het centrum.",
+    "exampleTranslation": "We rent an apartment in the city centre.",
+    "category": "verb"
+  },
+  {
+    "word": "boodschappen doen",
+    "translation": "to do the shopping",
+    "example": "Op zaterdag doe ik boodschappen bij de supermarkt.",
+    "exampleTranslation": "On Saturday I do the shopping at the supermarket.",
+    "category": "verb"
+  },
+  {
+    "word": "opstaan",
+    "translation": "to get up",
+    "example": "Ik sta elke dag om zeven uur op.",
+    "exampleTranslation": "I get up at seven o'clock every day.",
+    "category": "verb"
+  },
+  {
+    "word": "denken",
+    "translation": "to think",
+    "example": "Ik denk dat de bus te laat is.",
+    "exampleTranslation": "I think the bus is late.",
+    "category": "verb"
+  },
+  {
+    "word": "de apotheek",
+    "translation": "the pharmacy",
+    "example": "Ik haal mijn medicijnen bij de apotheek.",
+    "exampleTranslation": "I pick up my medicine at the pharmacy.",
+    "category": "noun"
+  },
+  {
+    "word": "de tandarts",
+    "translation": "the dentist",
+    "example": "Ik heb morgen om negen uur een afspraak bij de tandarts.",
+    "exampleTranslation": "I have an appointment at the dentist tomorrow at nine o'clock.",
+    "category": "noun"
+  },
+  {
+    "word": "de pijn",
+    "translation": "the pain",
+    "example": "Ik heb al drie dagen pijn in mijn rug.",
+    "exampleTranslation": "I have had pain in my back for three days.",
+    "category": "noun"
+  },
+  {
+    "word": "de koorts",
+    "translation": "the fever",
+    "example": "Mijn dochter heeft koorts en blijft vandaag thuis.",
+    "exampleTranslation": "My daughter has a fever and is staying home today.",
+    "category": "noun"
+  },
+  {
+    "word": "het recept",
+    "translation": "the prescription",
+    "example": "De huisarts geeft mij een recept voor de apotheek.",
+    "exampleTranslation": "The GP gives me a prescription for the pharmacy.",
+    "category": "noun"
+  },
+  {
+    "word": "het kind",
+    "translation": "the child",
+    "example": "Mijn kind zit in groep drie op de basisschool.",
+    "exampleTranslation": "My child is in group 3 at primary school.",
+    "category": "noun"
+  },
+  {
+    "word": "de ouders",
+    "translation": "the parents",
+    "example": "Mijn ouders komen volgende maand op bezoek.",
+    "exampleTranslation": "My parents are coming to visit next month.",
+    "category": "noun"
+  },
+  {
+    "word": "de man",
+    "translation": "the man, the husband",
+    "example": "Mijn man werkt in een ziekenhuis.",
+    "exampleTranslation": "My husband works in a hospital.",
+    "category": "noun"
+  },
+  {
+    "word": "de vrouw",
+    "translation": "the woman, the wife",
+    "example": "Mijn vrouw leert ook Nederlands.",
+    "exampleTranslation": "My wife is also learning Dutch.",
+    "category": "noun"
+  },
+  {
+    "word": "het geld",
+    "translation": "the money",
+    "example": "Ik heb niet genoeg geld bij me.",
+    "exampleTranslation": "I don't have enough money on me.",
+    "category": "noun"
+  },
+  {
+    "word": "de pinpas",
+    "translation": "the debit card",
+    "example": "Kan ik hier met mijn pinpas betalen?",
+    "exampleTranslation": "Can I pay with my debit card here?",
+    "category": "noun"
+  },
+  {
+    "word": "de supermarkt",
+    "translation": "the supermarket",
+    "example": "De supermarkt is op zondag tot acht uur open.",
+    "exampleTranslation": "The supermarket is open until eight o'clock on Sunday.",
+    "category": "noun"
+  },
+  {
+    "word": "de fiets",
+    "translation": "the bicycle",
+    "example": "Mijn fiets is kapot, dus ik neem de bus.",
+    "exampleTranslation": "My bike is broken, so I'm taking the bus.",
+    "category": "noun"
+  },
+  {
+    "word": "de halte",
+    "translation": "the (bus or tram) stop",
+    "example": "Bij welke halte moet ik uitstappen?",
+    "exampleTranslation": "At which stop do I have to get off?",
+    "category": "noun"
+  },
+  {
+    "word": "de keuken",
+    "translation": "the kitchen",
+    "example": "De keuken is klein, maar heel praktisch.",
+    "exampleTranslation": "The kitchen is small but very practical.",
+    "category": "noun"
+  },
+  {
+    "word": "het weekend",
+    "translation": "the weekend",
+    "example": "In het weekend bezoek ik mijn familie.",
+    "exampleTranslation": "At the weekend I visit my family.",
+    "category": "noun"
+  },
+  {
+    "word": "de maand",
+    "translation": "the month",
+    "example": "Ik betaal de huur aan het begin van de maand.",
+    "exampleTranslation": "I pay the rent at the beginning of the month.",
+    "category": "noun"
+  },
+  {
+    "word": "het ontbijt",
+    "translation": "the breakfast",
+    "example": "Bij het ontbijt eet ik brood met kaas.",
+    "exampleTranslation": "For breakfast I eat bread with cheese.",
+    "category": "noun"
+  },
+  {
+    "word": "de verwarming",
+    "translation": "the heating",
+    "example": "De verwarming in mijn woning doet het niet.",
+    "exampleTranslation": "The heating in my home isn't working.",
+    "category": "noun"
+  },
+  {
+    "word": "de huisbaas",
+    "translation": "the landlord",
+    "example": "Ik bel de huisbaas, want de deur gaat niet meer dicht.",
+    "exampleTranslation": "I'm calling the landlord because the door won't close anymore.",
+    "category": "noun"
+  },
+  {
+    "word": "groot",
+    "translation": "big",
+    "example": "Wij zoeken een groot huis met een tuin.",
+    "exampleTranslation": "We are looking for a big house with a garden.",
+    "category": "adjective"
+  },
+  {
+    "word": "klein",
+    "translation": "small",
+    "example": "Mijn appartement is klein, maar gezellig.",
+    "exampleTranslation": "My apartment is small but cosy.",
+    "category": "adjective"
+  },
+  {
+    "word": "goedkoop",
+    "translation": "cheap",
+    "example": "Op de markt zijn groente en fruit goedkoop.",
+    "exampleTranslation": "Vegetables and fruit are cheap at the market.",
+    "category": "adjective"
+  },
+  {
+    "word": "duur",
+    "translation": "expensive",
+    "example": "Een taxi is te duur, ik neem liever de trein.",
+    "exampleTranslation": "A taxi is too expensive, I'd rather take the train.",
+    "category": "adjective"
+  },
+  {
+    "word": "moe",
+    "translation": "tired",
+    "example": "Na een lange werkdag ben ik erg moe.",
+    "exampleTranslation": "After a long working day I am very tired.",
+    "category": "adjective"
+  },
+  {
+    "word": "warm",
+    "translation": "warm",
+    "example": "Het is vandaag warm, dus ik draag een korte broek.",
+    "exampleTranslation": "It is warm today, so I'm wearing shorts.",
+    "category": "adjective"
+  },
+  {
+    "word": "koud",
+    "translation": "cold",
+    "example": "In de winter is het vaak koud en nat.",
+    "exampleTranslation": "In winter it is often cold and wet.",
+    "category": "adjective"
+  },
+  {
+    "word": "blij",
+    "translation": "happy",
+    "example": "Ik ben blij dat ik het examen heb gehaald.",
+    "exampleTranslation": "I am happy that I passed the exam.",
+    "category": "adjective"
+  },
+  {
+    "word": "lekker",
+    "translation": "tasty, nice",
+    "example": "De soep van mijn buurvrouw is erg lekker.",
+    "exampleTranslation": "My neighbour's soup is very tasty.",
+    "category": "adjective"
+  },
+  {
+    "word": "oud",
+    "translation": "old",
+    "example": "Ons huis is oud, maar de keuken is nieuw.",
+    "exampleTranslation": "Our house is old, but the kitchen is new.",
+    "category": "adjective"
+  },
+  {
+    "word": "jij / je",
+    "translation": "you (informal)",
+    "example": "Kom jij morgen ook naar de les?",
+    "exampleTranslation": "Are you coming to class tomorrow too?",
+    "category": "pronoun"
+  },
+  {
+    "word": "hij",
+    "translation": "he",
+    "example": "Hij werkt elke dag van negen tot vijf.",
+    "exampleTranslation": "He works every day from nine to five.",
+    "category": "pronoun"
+  },
+  {
+    "word": "zij / ze",
+    "translation": "she, they",
+    "example": "Zij is mijn nieuwe collega.",
+    "exampleTranslation": "She is my new colleague.",
+    "category": "pronoun"
+  },
+  {
+    "word": "jullie",
+    "translation": "you (plural)",
+    "example": "Hoe lang wonen jullie al in Nederland?",
+    "exampleTranslation": "How long have you lived in the Netherlands?",
+    "category": "pronoun"
+  },
+  {
+    "word": "mij / me",
+    "translation": "me",
+    "example": "Wilt u mij een e-mail sturen?",
+    "exampleTranslation": "Would you send me an email?",
+    "category": "pronoun"
+  },
+  {
+    "word": "hem",
+    "translation": "him",
+    "example": "Ik bel hem straks terug.",
+    "exampleTranslation": "I'll call him back later.",
+    "category": "pronoun"
+  },
+  {
+    "word": "haar",
+    "translation": "her",
+    "example": "Ik help haar met het formulier.",
+    "exampleTranslation": "I'm helping her with the form.",
+    "category": "pronoun"
+  },
+  {
+    "word": "onze / ons",
+    "translation": "our",
+    "example": "Onze buren zijn erg vriendelijk.",
+    "exampleTranslation": "Our neighbours are very friendly.",
+    "category": "pronoun"
+  },
+  {
+    "word": "dit",
+    "translation": "this (with het-words)",
+    "example": "Dit formulier moet u ondertekenen.",
+    "exampleTranslation": "You have to sign this form.",
+    "category": "pronoun"
+  },
+  {
+    "word": "dat",
+    "translation": "that (with het-words)",
+    "example": "Dat boek is van de bibliotheek.",
+    "exampleTranslation": "That book belongs to the library.",
+    "category": "pronoun"
+  },
+  {
+    "word": "en",
+    "translation": "and",
+    "example": "Ik koop brood en melk.",
+    "exampleTranslation": "I'm buying bread and milk.",
+    "category": "connector_and_adverb"
+  },
+  {
+    "word": "of",
+    "translation": "or, whether",
+    "example": "Wilt u koffie of thee?",
+    "exampleTranslation": "Would you like coffee or tea?",
+    "category": "connector_and_adverb"
+  },
+  {
+    "word": "want",
+    "translation": "because",
+    "example": "Ik blijf thuis, want ik ben ziek.",
+    "exampleTranslation": "I'm staying home because I'm ill.",
+    "category": "connector_and_adverb"
+  },
+  {
+    "word": "dus",
+    "translation": "so",
+    "example": "De bus komt niet, dus ik ga lopen.",
+    "exampleTranslation": "The bus isn't coming, so I'll walk.",
+    "category": "connector_and_adverb"
+  },
+  {
+    "word": "ook",
+    "translation": "also, too",
+    "example": "Mijn vrouw komt ook naar de ouderavond.",
+    "exampleTranslation": "My wife is coming to the parents' evening too.",
+    "category": "connector_and_adverb"
+  },
+  {
+    "word": "niet",
+    "translation": "not",
+    "example": "Ik begrijp de brief niet.",
+    "exampleTranslation": "I don't understand the letter.",
+    "category": "connector_and_adverb"
+  },
+  {
+    "word": "altijd",
+    "translation": "always",
+    "example": "Ik neem altijd mijn identiteitsbewijs mee.",
+    "exampleTranslation": "I always take my ID with me.",
+    "category": "connector_and_adverb"
+  },
+  {
+    "word": "nooit",
+    "translation": "never",
+    "example": "Ik kom nooit te laat op mijn werk.",
+    "exampleTranslation": "I'm never late for work.",
+    "category": "connector_and_adverb"
+  },
+  {
+    "word": "soms",
+    "translation": "sometimes",
+    "example": "Soms werk ik ook op zaterdag.",
+    "exampleTranslation": "Sometimes I also work on Saturdays.",
+    "category": "connector_and_adverb"
+  },
+  {
+    "word": "vandaag",
+    "translation": "today",
+    "example": "Vandaag is de huisartsenpraktijk gesloten.",
+    "exampleTranslation": "The GP practice is closed today.",
+    "category": "connector_and_adverb"
+  },
+  {
+    "word": "gisteren",
+    "translation": "yesterday",
+    "example": "Gisteren heb ik een brief van de gemeente gekregen.",
+    "exampleTranslation": "Yesterday I received a letter from the municipality.",
+    "category": "connector_and_adverb"
+  },
+  {
+    "word": "eerst",
+    "translation": "first",
+    "example": "Eerst vult u het formulier in, daarna ondertekent u het.",
+    "exampleTranslation": "First you fill in the form, then you sign it.",
+    "category": "connector_and_adverb"
+  },
+  {
+    "word": "Goedemorgen!",
+    "translation": "Good morning!",
+    "example": "Goedemorgen! Ik heb om tien uur een afspraak.",
+    "exampleTranslation": "Good morning! I have an appointment at ten o'clock.",
+    "category": "daily_phrase"
+  },
+  {
+    "word": "Hoe gaat het met u?",
+    "translation": "How are you? (formal)",
+    "example": "Goedemiddag, mevrouw De Vries. Hoe gaat het met u?",
+    "exampleTranslation": "Good afternoon, Mrs De Vries. How are you?",
+    "category": "daily_phrase"
+  },
+  {
+    "word": "Hoe heet je?",
+    "translation": "What's your name? (informal)",
+    "example": "Hoe heet je? Ik heet Sara.",
+    "exampleTranslation": "What's your name? My name is Sara.",
+    "category": "daily_phrase"
+  },
+  {
+    "word": "Waar kom je vandaan?",
+    "translation": "Where are you from?",
+    "example": "Waar kom je vandaan? Ik kom uit Syrië.",
+    "exampleTranslation": "Where are you from? I'm from Syria.",
+    "category": "daily_phrase"
+  },
+  {
+    "word": "Leuk je te ontmoeten.",
+    "translation": "Nice to meet you.",
+    "example": "Ik ben Ahmed, je nieuwe buurman. Leuk je te ontmoeten!",
+    "exampleTranslation": "I'm Ahmed, your new neighbour. Nice to meet you!",
+    "category": "daily_phrase"
+  },
+  {
+    "word": "Ik ben nieuw hier.",
+    "translation": "I'm new here.",
+    "example": "Hallo, ik ben nieuw hier. Ik woon op nummer twaalf.",
+    "exampleTranslation": "Hello, I'm new here. I live at number twelve.",
+    "category": "daily_phrase"
+  },
+  {
+    "word": "Ik begrijp het niet.",
+    "translation": "I don't understand.",
+    "example": "Sorry, ik begrijp het niet. Kunt u langzamer praten?",
+    "exampleTranslation": "Sorry, I don't understand. Could you speak more slowly?",
+    "category": "daily_phrase"
+  },
+  {
+    "word": "Kunt u dat herhalen?",
+    "translation": "Could you repeat that?",
+    "example": "Kunt u dat herhalen? Ik heb het niet goed gehoord.",
+    "exampleTranslation": "Could you repeat that? I didn't hear it properly.",
+    "category": "daily_phrase"
+  },
+  {
+    "word": "Spreekt u Engels?",
+    "translation": "Do you speak English?",
+    "example": "Spreekt u Engels? Mijn Nederlands is nog niet zo goed.",
+    "exampleTranslation": "Do you speak English? My Dutch isn't very good yet.",
+    "category": "daily_phrase"
+  },
+  {
+    "word": "Hoe laat is het?",
+    "translation": "What time is it?",
+    "example": "Hoe laat is het? Het is half drie.",
+    "exampleTranslation": "What time is it? It is half past two.",
+    "category": "daily_phrase"
+  },
+  {
+    "word": "Waar is het toilet?",
+    "translation": "Where is the toilet?",
+    "example": "Pardon, waar is het toilet?",
+    "exampleTranslation": "Excuse me, where is the toilet?",
+    "category": "daily_phrase"
+  },
+  {
+    "word": "Mag ik pinnen?",
+    "translation": "Can I pay by card?",
+    "example": "Mag ik pinnen, of moet ik contant betalen?",
+    "exampleTranslation": "Can I pay by card, or do I have to pay cash?",
+    "category": "daily_phrase"
+  },
+  {
+    "word": "Geen probleem.",
+    "translation": "No problem.",
+    "example": "Sorry dat ik te laat ben. – Geen probleem!",
+    "exampleTranslation": "Sorry I'm late. – No problem!",
+    "category": "daily_phrase"
+  },
+  {
+    "word": "Eet smakelijk!",
+    "translation": "Enjoy your meal!",
+    "example": "Het eten staat op tafel. Eet smakelijk!",
+    "exampleTranslation": "The food is on the table. Enjoy your meal!",
+    "category": "daily_phrase"
+  },
+  {
+    "word": "Gefeliciteerd!",
+    "translation": "Congratulations!",
+    "example": "Gefeliciteerd met je verjaardag!",
+    "exampleTranslation": "Happy birthday!",
+    "category": "daily_phrase"
+  },
+  {
+    "word": "Fijn weekend!",
+    "translation": "Have a nice weekend!",
+    "example": "Tot maandag en fijn weekend!",
+    "exampleTranslation": "See you on Monday and have a nice weekend!",
+    "category": "daily_phrase"
+  },
+  {
+    "word": "Tot morgen!",
+    "translation": "See you tomorrow!",
+    "example": "Fijne avond en tot morgen!",
+    "exampleTranslation": "Have a nice evening and see you tomorrow!",
+    "category": "daily_phrase"
+  },
+  {
+    "word": "Tot ziens!",
+    "translation": "Goodbye!",
+    "example": "Bedankt voor uw hulp. Tot ziens!",
+    "exampleTranslation": "Thank you for your help. Goodbye!",
+    "category": "daily_phrase"
   }
 ]

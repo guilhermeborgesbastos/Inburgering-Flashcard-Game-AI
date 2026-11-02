@@ -15,20 +15,20 @@ The data file is a flat JSON array at `assets/data/cards.json`. Each entry has e
 
 There are no IDs, no nesting, no optional fields. New entries are appended to the end of the array. No alphabetical or other ordering is enforced within categories.
 
-**Categories observed (as of 2026-07-22):**
-- `verb` — Dutch infinitives (includes eten, drinken added 2026-07-22; total verb count is large, always re-read file to verify)
-- `noun` — nouns with article (de/het) in the word field
-- `adjective`
-- `pronoun`
-- `article`
-- `connector_and_adverb`
-- `phrase` — full sentence starters, email openers, exam instructions
-- `daily_phrase` — conversational everyday phrases
+**Categories and counts (as of 2026-11-02, 431 cards; always re-read the file to verify):**
+- `verb` (97) — Dutch infinitives
+- `noun` (146) — nouns with article (de/het) in the word field
+- `adjective` (45)
+- `pronoun` (17) — paired forms use a slash, e.g. `jij / je`, `zij / ze`, `onze / ons`
+- `article` (3)
+- `connector_and_adverb` (34)
+- `phrase` (71) — full sentence starters, email openers, exam instructions
+- `daily_phrase` (18) — conversational everyday phrases (greetings, small talk, "Kunt u dat herhalen?")
 
 **Formatting:** 2-space indentation, keys in the order word/translation/example/exampleTranslation/category, double quotes, Unix line endings.
 
 **Duplicate pitfalls:**
-- A verb may appear as a word in a `phrase` or `daily_phrase` entry (e.g., "herhalen" appears in "Kunt u dat herhalen?" phrase card) — this does NOT count as a duplicate for the verb category.
+- A verb may appear as a word in a `phrase` or `daily_phrase` entry (e.g., "herhalen" appears in the "Kunt u dat herhalen?" daily_phrase card) — this does NOT count as a duplicate for the verb category.
 - Multi-word verb expressions like "boodschappen doen", "vrij vragen", "contact opnemen" are accepted as verb entries.
 
 **Why:** Needed to avoid schema drift and duplicate detection errors in future sessions. See [[project-cards-existing-verbs]] for the full verb inventory.
