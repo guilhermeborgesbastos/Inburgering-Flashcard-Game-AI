@@ -839,6 +839,58 @@ kbd {
   }
 }
 
+/* Low-key reset next to the remaining count; turns orange while waiting for confirmation. */
+.link-btn {
+  margin-left: 6px;
+  padding: 4px 2px;
+  border: 0;
+  background: none;
+  color: var(--teal-700);
+  font: inherit;
+  font-weight: 700;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.link-btn::before {
+  content: '·';
+  display: inline-block;
+  margin-right: 8px;
+  color: var(--muted);
+  font-weight: 400;
+}
+
+.link-btn span {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.link-btn:hover span {
+  color: var(--teal-900);
+}
+
+.link-btn.is-confirming span {
+  color: var(--orange-deep);
+}
+
+.link-btn:focus-visible {
+  outline: none;
+  border-radius: 6px;
+  box-shadow: var(--focus-ring);
+}
+
+@media (max-width: 640px) {
+  .link-btn {
+    display: block;
+    margin-left: 0;
+    padding-left: 0;
+  }
+
+  .link-btn::before {
+    display: none;
+  }
+}
+
 /* Only shown when pronunciation needs attention. */
 .audio-status {
   margin: 0;
