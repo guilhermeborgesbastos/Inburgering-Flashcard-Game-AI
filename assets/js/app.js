@@ -32,6 +32,14 @@ let currentIndex = 0;
 let isFlipped = false;
 let selectedCategory = 'all';
 
+// Progress is kept per deck ('all' or a category): card keys in study order plus the index of the
+// current card. index === order.length means the deck is finished. Saved in localStorage.
+const STORAGE_KEY = 'inburgering-progress-v1';
+const START_OVER_CONFIRM_MS = 4000;
+let decks = {};
+let startOverTimer = null;
+let progressReady = false; // never save before the stored progress has been restored
+
 // DOM elements
 const card = document.getElementById('card');
 const cardFront = document.getElementById('card-front');
@@ -41,6 +49,7 @@ const nextBtn = document.getElementById('next-btn');
 const prevBtn = document.getElementById('prev-btn');
 const shuffleBtn = document.getElementById('shuffle-btn');
 const revealBtn = document.getElementById('reveal-btn');
+const startOverBtn = document.getElementById('start-over-btn');
 const remainingCardsElement = document.getElementById('remaining-cards');
 const progressPercentage = document.getElementById('progress-percentage');
 const progressCounter = document.getElementById('progress-counter');
@@ -73,11 +82,74 @@ function createElement(tag, className, text) {
   return element;
 }
 
+function cardKey(item) {
+  return `${item.category}|${item.word}`;
+}
+
+function isFinished() {
+  return filteredCards.length > 0 && currentIndex >= filteredCards.length;
+}
+
+function cardsForCategory(category) {
+  return category === 'all' ? allCards : allCards.filter((item) => item.category === category);
+}
+
+// Rebuilds a deck from its saved state against the current card data: cards that no longer
+// exist are dropped (keeping how many seen cards remain), and new cards join the end unseen.
+function syncDeck(category) {
+  const cards = cardsForCategory(category);
+  const byKey = new Map(cards.map((item) => [cardKey(item), item]));
+  const saved = decks[category];
+  let order = cards.map(cardKey);
+  let index = 0;
+
+  if (saved && Array.isArray(saved.order) && Number.isInteger(saved.index)) {
+    const kept = saved.order.filter((key) => byKey.has(key));
+    const known = new Set(kept);
+    index = saved.order.slice(0, Math.max(saved.index, 0)).filter((key) => byKey.has(key)).length;
+    order = [...kept, ...order.filter((key) => !known.has(key))];
+  }
+
+  decks[category] = { order, index: Math.min(index, order.length) };
+  return order.map((key) => byKey.get(key));
+}
+
+function selectedSpeed() {
+  return document.querySelector('input[name="speech-speed"]:checked')?.value || 'normal';
+}
+
+function loadProgress() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (!saved || saved.version !== 1) return null;
+    return saved;
+  } catch (error) {
+    return null;
+  }
+}
+
+function saveProgress() {
+  if (!progressReady) return;
+  if (filteredCards.length && decks[selectedCategory]) {
+    decks[selectedCategory].index = currentIndex;
+  }
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      version: 1,
+      category: selectedCategory,
+      speed: selectedSpeed(),
+      decks
+    }));
+  } catch (error) {
+    // Storage can be unavailable (private mode, quota); the app keeps working without it.
+  }
+}
+
 function updateFlipState() {
   card.classList.toggle('flip', isFlipped);
   cardFront.setAttribute('aria-hidden', String(isFlipped));
   cardBack.setAttribute('aria-hidden', String(!isFlipped));
-  revealBtn.textContent = isFlipped ? 'Show word' : 'Reveal meaning';
+  revealBtn.textContent = isFinished() ? 'Start over' : isFlipped ? 'Show word' : 'Reveal meaning';
   // Name the button from its visible content so screen readers announce the vocabulary.
   card.setAttribute('aria-labelledby', isFlipped ? 'card-back' : 'card-front');
   card.setAttribute('aria-pressed', String(isFlipped));
@@ -101,12 +173,15 @@ function playEntryAnimation(direction) {
 
 function updateButtons() {
   const hasCards = filteredCards.length > 0;
-  nextBtn.disabled = !hasCards;
-  prevBtn.disabled = !hasCards;
+  const finished = isFinished();
+  nextBtn.disabled = !hasCards || finished;
+  prevBtn.disabled = !hasCards || currentIndex === 0;
   revealBtn.disabled = !hasCards;
-  shuffleBtn.disabled = filteredCards.length < 2;
-  playWordBtn.disabled = !hasCards || !speechSupported || isSpeaking;
-  playExampleBtn.disabled = !hasCards || !speechSupported || isSpeaking;
+  // Shuffle only mixes the cards not studied yet (the current one included).
+  shuffleBtn.disabled = finished || filteredCards.length - currentIndex < 2;
+  playWordBtn.disabled = !hasCards || finished || !speechSupported || isSpeaking;
+  playExampleBtn.disabled = !hasCards || finished || !speechSupported || isSpeaking;
+  startOverBtn.hidden = !hasCards || currentIndex === 0;
 }
 
 function setProgress(position, total) {
@@ -160,9 +235,19 @@ function showLoadError(error) {
 }
 
 function updateCard() {
+  cancelStartOverConfirm();
   if (!filteredCards.length) {
     renderMessage('No cards found', 'No cards match this category. Choose another category or switch back to All.');
     setProgress(0, 0);
+    updateButtons();
+    return;
+  }
+
+  if (isFinished()) {
+    const deckName = selectedCategory === 'all' ? '' : ` ${titleCaseCategory(selectedCategory)}`;
+    renderMessage('Deck complete', `You've gone through all ${filteredCards.length}${deckName} cards. Start over to study them again, or choose another category.`);
+    setProgress(filteredCards.length, filteredCards.length);
+    updateFlipState();
     updateButtons();
     return;
   }
@@ -202,7 +287,7 @@ function updateCard() {
 }
 
 function flipCard() {
-  if (!filteredCards.length) {
+  if (!filteredCards.length || isFinished()) {
     return;
   }
 
@@ -214,54 +299,107 @@ function flipCard() {
 }
 
 function nextCard() {
-  if (!filteredCards.length) {
+  // No wrap-around: after the last card the deck is finished until the user starts over.
+  if (!filteredCards.length || isFinished()) {
     return;
   }
 
-  currentIndex = (currentIndex + 1) % filteredCards.length;
+  currentIndex += 1;
   resetCardFlip();
   updateCard();
   playEntryAnimation('next');
-  trackEvent('next_card', 'Flashcard', filteredCards[currentIndex]?.word || 'unknown');
+  saveProgress();
+  if (isFinished()) {
+    trackEvent('deck_complete', 'Flashcard', titleCaseCategory(selectedCategory), filteredCards.length);
+  } else {
+    trackEvent('next_card', 'Flashcard', filteredCards[currentIndex]?.word || 'unknown');
+  }
 }
 
 function prevCard() {
-  if (!filteredCards.length) {
+  if (!filteredCards.length || currentIndex === 0) {
     return;
   }
 
-  currentIndex = (currentIndex - 1 + filteredCards.length) % filteredCards.length;
+  currentIndex -= 1;
   resetCardFlip();
   updateCard();
   playEntryAnimation('prev');
+  saveProgress();
   trackEvent('previous_card', 'Flashcard', filteredCards[currentIndex]?.word || 'unknown');
 }
 
 function shuffleCards() {
-  if (filteredCards.length < 2) {
+  const remaining = filteredCards.length - currentIndex;
+  if (isFinished() || remaining < 2) {
     return;
   }
 
-  for (let i = filteredCards.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
+  // Cards before the current one were already studied; only the rest is reshuffled.
+  for (let i = filteredCards.length - 1; i > currentIndex; i--) {
+    const j = currentIndex + Math.floor(Math.random() * (i - currentIndex + 1));
     [filteredCards[i], filteredCards[j]] = [filteredCards[j], filteredCards[i]];
   }
-  currentIndex = 0;
+  decks[selectedCategory].order = filteredCards.map(cardKey);
   resetCardFlip();
   updateCard();
   playEntryAnimation('next');
-  trackEvent('shuffle_deck', 'Flashcard', `shuffle_${filteredCards.length}`);
+  saveProgress();
+  trackEvent('shuffle_deck', 'Flashcard', `shuffle_${remaining}`);
+}
+
+function showDeck(category) {
+  filteredCards = syncDeck(category);
+  currentIndex = decks[category].index;
 }
 
 function applyCategoryFilter() {
-  filteredCards = selectedCategory === 'all'
-    ? [...allCards]
-    : allCards.filter((item) => item.category === selectedCategory);
-  currentIndex = 0;
+  // Each category keeps its own place, so switching never repeats cards.
+  showDeck(selectedCategory);
   resetCardFlip();
   updateCard();
   playEntryAnimation('next');
+  saveProgress();
   trackEvent('filter_category', 'Flashcard', titleCaseCategory(selectedCategory));
+}
+
+function cancelStartOverConfirm() {
+  clearTimeout(startOverTimer);
+  startOverTimer = null;
+  startOverBtn.classList.remove('is-confirming');
+  startOverBtn.firstElementChild.textContent = 'Start over';
+}
+
+function startOver() {
+  if (!filteredCards.length) return;
+  cancelStartOverConfirm();
+  const studied = Math.min(currentIndex, filteredCards.length);
+  delete decks[selectedCategory];
+  showDeck(selectedCategory);
+  resetCardFlip();
+  updateCard();
+  playEntryAnimation('next');
+  saveProgress();
+  trackEvent('start_over', 'Flashcard', titleCaseCategory(selectedCategory), studied);
+}
+
+// Resetting mid-deck throws away progress, so the small link asks for a second tap first.
+function handleStartOverClick() {
+  if (startOverBtn.classList.contains('is-confirming')) {
+    startOver();
+    return;
+  }
+  startOverBtn.classList.add('is-confirming');
+  startOverBtn.firstElementChild.textContent = 'Confirm reset?';
+  startOverTimer = setTimeout(cancelStartOverConfirm, START_OVER_CONFIRM_MS);
+}
+
+function handleRevealClick() {
+  if (isFinished()) {
+    startOver();
+  } else {
+    flipCard();
+  }
 }
 
 function createCategoryChip(value, label, count) {
@@ -348,7 +486,7 @@ function speak(text, isWord = false) {
 }
 
 function playWordPronunciation() {
-  if (!filteredCards.length || isSpeaking) return;
+  if (!filteredCards.length || isFinished() || isSpeaking) return;
   if (isFlipped) {
     flipCard();
   }
@@ -358,7 +496,7 @@ function playWordPronunciation() {
 }
 
 function playExamplePronunciation() {
-  if (!filteredCards.length || isSpeaking) return;
+  if (!filteredCards.length || isFinished() || isSpeaking) return;
   if (!isFlipped) {
     flipCard();
   }
@@ -433,7 +571,8 @@ card.addEventListener('click', handleCardClick);
 card.addEventListener('keydown', handleCardKeydown);
 card.addEventListener('touchstart', handleTouchStart, { passive: true });
 card.addEventListener('touchend', handleTouchEnd);
-revealBtn.addEventListener('click', flipCard);
+revealBtn.addEventListener('click', handleRevealClick);
+startOverBtn.addEventListener('click', handleStartOverClick);
 nextBtn.addEventListener('click', nextCard);
 prevBtn.addEventListener('click', prevCard);
 shuffleBtn.addEventListener('click', shuffleCards);
@@ -445,15 +584,35 @@ document.addEventListener('keydown', handleGlobalKeydown);
 // Speed control listeners
 document.querySelectorAll('input[name="speech-speed"]').forEach(radio => {
   radio.addEventListener('change', function() {
-    if (this.value === 'slow') {
-      speechRate = 0.5;
-    } else if (this.value === 'slower') {
-      speechRate = 0.75;
-    } else {
-      speechRate = 1;
-    }
+    speechRate = rateForSpeed(this.value);
+    saveProgress();
   });
 });
+
+function rateForSpeed(value) {
+  if (value === 'slow') {
+    return 0.5;
+  } else if (value === 'slower') {
+    return 0.75;
+  }
+  return 1;
+}
+
+function restoreProgress(saved) {
+  if (!saved) return;
+  const categories = new Set(allCards.map((item) => item.category));
+  if (saved.decks && typeof saved.decks === 'object') {
+    decks = Object.fromEntries(Object.entries(saved.decks).filter(([category]) => category === 'all' || categories.has(category)));
+  }
+  if (saved.category === 'all' || categories.has(saved.category)) {
+    selectedCategory = saved.category;
+  }
+  const speedInput = document.querySelector(`input[name="speech-speed"][value="${saved.speed}"]`);
+  if (speedInput) {
+    speedInput.checked = true;
+    speechRate = rateForSpeed(saved.speed);
+  }
+}
 
 async function initializeApp() {
   showInteractionTip();
@@ -462,8 +621,14 @@ async function initializeApp() {
   if (!speechSupported) setAudioStatus('Pronunciation is not supported in this browser. You can still study the cards.');
   try {
     await loadCards();
+    restoreProgress(loadProgress());
     populateCategoryFilter();
+    categoryFilter.querySelector('.chip[aria-pressed="true"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    showDeck(selectedCategory);
+    // An empty deck (e.g. a broken data file) must not overwrite the saved progress.
+    progressReady = allCards.length > 0;
     updateCard();
+    saveProgress();
   } catch (error) {
     showLoadError(error);
   }

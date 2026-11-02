@@ -22,6 +22,7 @@ This project was created quickly using LLMs to address my personal need: **Learn
 - 🔊 **Dutch pronunciation playback** - Listen to Dutch pronunciation with adjustable speed (Normal, Slower -25%, Slow -50%)
 - Category filtering for targeted learning, with the number of cards per category
 - Swipe gestures on touch screens and keyboard shortcuts on desktop
+- **Saved progress** - Your place in each deck is kept in the browser (localStorage), and cards never repeat until you finish the deck or choose **Start over**
 - Loads flashcard data from `assets/data/cards.json`
 - Works on desktop, tablet and phone browsers
 - **Modular structure** - Clean separation of concerns for easy maintenance and deployment
@@ -33,8 +34,9 @@ This project was created quickly using LLMs to address my personal need: **Learn
 3. Select your preferred **pronunciation speed** (1×, 0.75× or 0.5×)
 4. Use the **🔊 Word** and **🔊 Phrase** buttons to listen to Dutch pronunciation
 5. Pick a **category** to study only one type of vocabulary, or **All** for the full deck
-6. Use **Previous**, **Next** and **Shuffle** to browse cards within the current selection
+6. Use **Previous**, **Next** and **Shuffle** to browse cards within the current selection; **Shuffle** only mixes the cards you haven't studied yet
 7. On touch screens, swipe the card left or right; on desktop, press <kbd>Space</kbd> to flip and <kbd>←</kbd> <kbd>→</kbd> to move
+8. Close the page whenever you like: each deck reopens where you left off. After the last card you'll see **Deck complete**; use **Start over** there, or next to the cards-left count at any time, to restart the current deck
 
 ## ⚠️ Notes
 
@@ -54,4 +56,3 @@ This project was created quickly using LLMs to address my personal need: **Learn
 - Add more vocabulary levels (A2 → B1)
 - Add spaced repetition
 - Add sentence rhythm and pronunciation tips
-- Add progress tracking/persistence with localStorage
