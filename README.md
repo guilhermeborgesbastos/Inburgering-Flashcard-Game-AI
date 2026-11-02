@@ -8,9 +8,7 @@
 
 ## 🎬 Demo
 
-<p align="center">
-  <img src=".github/assets/demo.gif" alt="Demo: revealing a card's meaning, playing Dutch pronunciation at 0.75× speed, swiping to the next word, filtering by the Phrase category and shuffling the deck" width="360">
-</p>
+https://github.com/user-attachments/assets/3f56d830-4575-4166-aa8c-6bd50c473e5c
 
 ## 🎯 Purpose
 
