@@ -41,7 +41,7 @@ Flat JSON array; every entry has exactly these string fields, in this key order,
 { "word": "...", "translation": "...", "example": "...", "exampleTranslation": "...", "category": "verb" }
 ```
 
-- `category` is lowercase snake_case (`verb`, `noun`, `adjective`, `pronoun`, `article`, `connector_and_adverb`, `phrase`, `daily_phrase`); displayed via `titleCaseCategory()`. Missing category falls back to `general`.
+- `category` is lowercase snake_case (`verb`, `noun`, `adjective`, `pronoun`, `article`, `connector_and_adverb`, `phrase`, `daily_phrase`, `abbreviation`); displayed via `titleCaseCategory()`. Missing category falls back to `general`.
 - Nouns include their article in `word` (e.g. `de afspraak`). New entries are appended to the end; no IDs or ordering.
 - Words or translations longer than `LONG_WORD_LENGTH` (22 chars) get a smaller `.is-long` type size; card faces have a fixed height and the back scrolls if content overflows.
 - `.claude/agent-memory/vocab-card-extender/` holds notes from a card-extending agent (schema, duplicate-detection pitfalls) — consult it before bulk-adding cards.

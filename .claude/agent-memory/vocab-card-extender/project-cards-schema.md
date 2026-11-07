@@ -15,7 +15,7 @@ The data file is a flat JSON array at `assets/data/cards.json`. Each entry has e
 
 There are no IDs, no nesting, no optional fields. New entries are appended to the end of the array. No alphabetical or other ordering is enforced within categories.
 
-**Categories and counts (as of 2026-11-02, 431 cards; always re-read the file to verify):**
+**Categories and counts (as of 2026-11-06, 463 cards; always re-read the file to verify):**
 - `verb` (97) — Dutch infinitives
 - `noun` (146) — nouns with article (de/het) in the word field
 - `adjective` (45)
@@ -24,6 +24,7 @@ There are no IDs, no nesting, no optional fields. New entries are appended to th
 - `connector_and_adverb` (34)
 - `phrase` (71) — full sentence starters, email openers, exam instructions
 - `daily_phrase` (18) — conversational everyday phrases (greetings, small talk, "Kunt u dat herhalen?")
+- `abbreviation` (32) — Dutch abbreviations as written (`bijv.`, `t/m`, `BSN`, `DigiD`); the translation gives the English meaning followed by the full Dutch form in parentheses, e.g. `for example (bijvoorbeeld)`
 
 **Formatting:** 2-space indentation, keys in the order word/translation/example/exampleTranslation/category, double quotes, Unix line endings.
 

@@ -3015,5 +3015,229 @@
     "example": "Bedankt voor uw hulp. Tot ziens!",
     "exampleTranslation": "Thank you for your help. Goodbye!",
     "category": "daily_phrase"
+  },
+  {
+    "word": "a.u.b.",
+    "translation": "please (alstublieft)",
+    "example": "Wilt u hier a.u.b. uw naam invullen?",
+    "exampleTranslation": "Would you please fill in your name here?",
+    "category": "abbreviation"
+  },
+  {
+    "word": "bijv.",
+    "translation": "for example (bijvoorbeeld)",
+    "example": "Ik eet graag fruit, bijv. appels en peren.",
+    "exampleTranslation": "I like eating fruit, for example apples and pears.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "enz.",
+    "translation": "etc. (enzovoort)",
+    "example": "In de winkel koop ik brood, melk, kaas enz.",
+    "exampleTranslation": "In the shop I buy bread, milk, cheese, etc.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "d.w.z.",
+    "translation": "that is / i.e. (dat wil zeggen)",
+    "example": "De winkel is op zondag dicht, d.w.z. u kunt dan niets kopen.",
+    "exampleTranslation": "The shop is closed on Sunday, that is, you cannot buy anything then.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "o.a.",
+    "translation": "among other things (onder andere)",
+    "example": "Ik heb o.a. mijn paspoort en mijn bankpas meegenomen.",
+    "exampleTranslation": "Among other things, I brought my passport and my bank card.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "i.p.v.",
+    "translation": "instead of (in plaats van)",
+    "example": "Ik neem vandaag de fiets i.p.v. de bus.",
+    "exampleTranslation": "Today I am taking the bike instead of the bus.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "i.v.m.",
+    "translation": "in connection with / due to (in verband met)",
+    "example": "De les gaat morgen niet door i.v.m. ziekte.",
+    "exampleTranslation": "The lesson is cancelled tomorrow due to illness.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "z.s.m.",
+    "translation": "as soon as possible (zo snel mogelijk)",
+    "example": "Wilt u mij z.s.m. terugbellen?",
+    "exampleTranslation": "Would you call me back as soon as possible?",
+    "category": "abbreviation"
+  },
+  {
+    "word": "t/m",
+    "translation": "up to and including (tot en met)",
+    "example": "De cursus is van maandag t/m vrijdag.",
+    "exampleTranslation": "The course is from Monday up to and including Friday.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "n.v.t.",
+    "translation": "not applicable (niet van toepassing)",
+    "example": "Heeft u geen kinderen? Vul dan n.v.t. in.",
+    "exampleTranslation": "Do you have no children? Then fill in not applicable.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "z.o.z.",
+    "translation": "please turn over (zie ommezijde)",
+    "example": "Onderaan de brief staat z.o.z., dus ik draai het papier om.",
+    "exampleTranslation": "At the bottom of the letter it says please turn over, so I turn the paper over.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "t.a.v.",
+    "translation": "for the attention of (ter attentie van)",
+    "example": "Ik stuur de brief t.a.v. mevrouw De Vries.",
+    "exampleTranslation": "I am sending the letter for the attention of Mrs De Vries.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "evt.",
+    "translation": "possibly / if needed (eventueel)",
+    "example": "U kunt evt. ook per e-mail betalen.",
+    "exampleTranslation": "If needed, you can also pay by email.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "ca.",
+    "translation": "approximately (circa)",
+    "example": "De reis duurt ca. twee uur.",
+    "exampleTranslation": "The trip takes approximately two hours.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "incl.",
+    "translation": "including (inclusief)",
+    "example": "De prijs is € 50, incl. btw.",
+    "exampleTranslation": "The price is € 50, including VAT.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "excl.",
+    "translation": "excluding (exclusief)",
+    "example": "De huur is € 800 per maand, excl. gas en licht.",
+    "exampleTranslation": "The rent is € 800 per month, excluding gas and electricity.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "p.p.",
+    "translation": "per person (per persoon)",
+    "example": "Het diner kost € 25 p.p.",
+    "exampleTranslation": "The dinner costs € 25 per person.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "dhr.",
+    "translation": "Mr (de heer)",
+    "example": "Ik heb een afspraak met dhr. Jansen.",
+    "exampleTranslation": "I have an appointment with Mr Jansen.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "mevr.",
+    "translation": "Mrs / Ms (mevrouw)",
+    "example": "Mevr. Bakker is mijn docent Nederlands.",
+    "exampleTranslation": "Mrs Bakker is my Dutch teacher.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "tel.",
+    "translation": "phone number (telefoonnummer)",
+    "example": "Mijn tel. staat onder aan de e-mail.",
+    "exampleTranslation": "My phone number is at the bottom of the email.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "nr.",
+    "translation": "number (nummer)",
+    "example": "Ik woon in de Kerkstraat nr. 12.",
+    "exampleTranslation": "I live at number 12 Kerkstraat.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "btw",
+    "translation": "VAT (belasting toegevoegde waarde)",
+    "example": "Op de rekening staat ook de btw.",
+    "exampleTranslation": "The VAT is also on the bill.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "BSN",
+    "translation": "citizen service number (burgerservicenummer)",
+    "example": "Bij de huisarts moet ik mijn BSN geven.",
+    "exampleTranslation": "At the GP I have to give my citizen service number.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "DigiD",
+    "translation": "digital ID for government websites (Digitale Identiteit)",
+    "example": "Ik log in met mijn DigiD om mijn belasting te regelen.",
+    "exampleTranslation": "I log in with my DigiD to arrange my taxes.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "IND",
+    "translation": "Immigration and Naturalisation Service (Immigratie- en Naturalisatiedienst)",
+    "example": "Ik heb een brief van de IND gekregen over mijn verblijfsvergunning.",
+    "exampleTranslation": "I received a letter from the IND about my residence permit.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "DUO",
+    "translation": "Education Executive Agency (Dienst Uitvoering Onderwijs)",
+    "example": "Ik meld me aan voor het inburgeringsexamen bij DUO.",
+    "exampleTranslation": "I register for the civic integration exam with DUO.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "GGD",
+    "translation": "Municipal Public Health Service (Gemeentelijke Gezondheidsdienst)",
+    "example": "Mijn kind krijgt een vaccinatie bij de GGD.",
+    "exampleTranslation": "My child gets a vaccination at the GGD.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "UWV",
+    "translation": "Employee Insurance Agency (Uitvoeringsinstituut Werknemersverzekeringen)",
+    "example": "Ik ben mijn baan kwijt en neem contact op met het UWV.",
+    "exampleTranslation": "I lost my job and I contact the UWV.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "AOW",
+    "translation": "state pension (Algemene Ouderdomswet)",
+    "example": "Mijn buurman is 70 en krijgt AOW.",
+    "exampleTranslation": "My neighbour is 70 and receives a state pension.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "NS",
+    "translation": "Dutch Railways (Nederlandse Spoorwegen)",
+    "example": "Ik koop een kaartje bij de NS voor de trein naar Utrecht.",
+    "exampleTranslation": "I buy a ticket from NS for the train to Utrecht.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "ov",
+    "translation": "public transport (openbaar vervoer)",
+    "example": "Ik reis elke dag met het ov naar mijn werk.",
+    "exampleTranslation": "I travel to work by public transport every day.",
+    "category": "abbreviation"
+  },
+  {
+    "word": "mbo",
+    "translation": "secondary vocational education (middelbaar beroepsonderwijs)",
+    "example": "Mijn dochter gaat na de zomer naar het mbo.",
+    "exampleTranslation": "My daughter is going to vocational school after the summer.",
+    "category": "abbreviation"
   }
 ]
