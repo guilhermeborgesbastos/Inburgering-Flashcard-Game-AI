@@ -42,7 +42,7 @@ Flat JSON array; every entry has these string fields, in this key order, 2-space
 ```
 
 - `category` is lowercase snake_case (`verb`, `noun`, `adjective`, `pronoun`, `article`, `connector_and_adverb`, `phrase`, `daily_phrase`, `abbreviation`); displayed via `titleCaseCategory()`. Missing category falls back to `general`.
-- Optional sixth field, `spoken` (after `category`), used only by `abbreviation` cards: the text "Play word" reads instead of `word` (e.g. `a.u.b.` → `alstublieft`, `BSN` → `B S N`). Other cards don't have it.
+- Optional sixth field, `spoken` (after `category`), used only by `abbreviation` cards: the text "Play word" reads instead of `word` (e.g. `a.u.b.` → `alstublieft`, `BSN` → `B S N`). "Play phrase" also replaces those words wherever they appear in any card's example (`toSpokenText()`), while the card still shows the written form. Other cards don't have it.
 - Nouns include their article in `word` (e.g. `de afspraak`). New entries are appended to the end; no IDs or ordering.
 - Words or translations longer than `LONG_WORD_LENGTH` (22 chars) get a smaller `.is-long` type size; card faces have a fixed height and the back scrolls if content overflows.
 - `.claude/agent-memory/vocab-card-extender/` holds notes from a card-extending agent (schema, duplicate-detection pitfalls) — consult it before bulk-adding cards.

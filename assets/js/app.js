@@ -27,6 +27,7 @@ const DEFAULT_CATEGORY = 'general';
 const LONG_WORD_LENGTH = 22;
 const SWIPE_THRESHOLD = 50;
 let allCards = [];
+let spokenForms = []; // [pattern, spoken text] for each card with a `spoken` value, longest word first
 let filteredCards = [];
 let currentIndex = 0;
 let isFlipped = false;
@@ -224,6 +225,28 @@ async function loadCards() {
 
   allCards = normalizeCards(await response.json());
   filteredCards = [...allCards];
+  spokenForms = buildSpokenForms(allCards);
+}
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&');
+}
+
+// Matches a card's word as a whole token (not inside a longer word), ignoring case.
+function buildSpokenForms(cards) {
+  return cards
+    .filter((item) => item.spoken)
+    .sort((a, b) => b.word.length - a.word.length)
+    .map((item) => [new RegExp(`(^|[^\\p{L}\\p{N}])${escapeRegExp(item.word)}(?![\\p{L}\\p{N}])`, 'giu'), item.spoken]);
+}
+
+// Replaces abbreviations in a sentence with their spoken form, e.g. "a.u.b." -> "alstublieft".
+// An abbreviation's final dot that also ends the sentence is kept as a full stop.
+function toSpokenText(text) {
+  return spokenForms.reduce((result, [pattern, spoken]) => result.replace(pattern, (match, before, offset, whole) => {
+    const endsSentence = match.endsWith('.') && !whole.slice(offset + match.length).trim();
+    return `${before}${spoken}${endsSentence ? '.' : ''}`;
+  }), text);
 }
 
 function showLoadError(error) {
@@ -503,7 +526,7 @@ function playExamplePronunciation() {
   }
   const currentCard = filteredCards[currentIndex];
   trackEvent('play_example_audio', 'Flashcard', currentCard.word);
-  speak(currentCard.example, false);
+  speak(toSpokenText(currentCard.example), false);
 }
 
 // Swipe left/right on the card to navigate; a tap still flips it
