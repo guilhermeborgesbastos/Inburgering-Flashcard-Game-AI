@@ -1,6 +1,7 @@
 ﻿// Inburgering Dutch Vocabulary Flashcard Game - Application Logic
 
-const CARDS_DATA_URL = 'assets/data/cards.json';
+// index.html passes a content-versioned URL (?v=) so returning browsers never use a stale cached copy.
+const CARDS_DATA_URL = document.currentScript?.dataset.cardsUrl || 'assets/data/cards.json';
 const GA_MEASUREMENT_ID = 'G-21RSDRNMG3';
 
 function trackEvent(action, category, label, value) {
