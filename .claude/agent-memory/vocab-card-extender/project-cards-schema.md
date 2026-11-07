@@ -13,7 +13,7 @@ The data file is a flat JSON array at `assets/data/cards.json`. Each entry has e
 - `exampleTranslation` — English translation of the example sentence
 - `category` — free-form lowercase string with underscores
 
-There are no IDs, no nesting, no optional fields. New entries are appended to the end of the array. No alphabetical or other ordering is enforced within categories.
+There are no IDs and no nesting. The only optional field is `spoken`, placed after `category` and used only by `abbreviation` cards: the text read by "Play word" instead of `word`. Written-only abbreviations get the full Dutch words (`a.u.b.` → `alstublieft`, `t/m` → `tot en met`); spelled-out ones get spaced capitals (`BSN` → `B S N`); acronyms said as a word get that word (`DUO` → `duo`). New entries are appended to the end of the array. No alphabetical or other ordering is enforced within categories.
 
 **Categories and counts (as of 2026-11-06, 463 cards; always re-read the file to verify):**
 - `verb` (97) — Dutch infinitives

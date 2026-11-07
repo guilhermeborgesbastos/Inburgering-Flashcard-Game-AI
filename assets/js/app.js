@@ -492,7 +492,8 @@ function playWordPronunciation() {
   }
   const currentCard = filteredCards[currentIndex];
   trackEvent('play_word_audio', 'Flashcard', currentCard.word);
-  speak(currentCard.word, true);
+  // `spoken` (optional) is what to say when the written word isn't read aloud as-is, e.g. a.u.b. -> alstublieft.
+  speak(currentCard.spoken || currentCard.word, true);
 }
 
 function playExamplePronunciation() {
