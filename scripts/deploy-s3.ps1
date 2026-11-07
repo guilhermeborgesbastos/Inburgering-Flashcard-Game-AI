@@ -16,7 +16,7 @@ $Destination = "s3://$BucketName"
 
 # index.html must reference each asset by its current content hash, or returning browsers can mix old assets with new markup.
 $IndexHtml = Get-Content -Raw (Join-Path $RepoRoot "index.html")
-foreach ($Asset in @("assets/css/style.css", "assets/js/app.js")) {
+foreach ($Asset in @("assets/css/style.css", "assets/js/app.js", "assets/data/cards.json")) {
   $Hash = (Get-FileHash -Algorithm SHA256 (Join-Path $RepoRoot $Asset)).Hash.ToLower().Substring(0, 12)
   if (-not $IndexHtml.Contains("${Asset}?v=$Hash")) {
     throw "index.html references a stale version of $Asset. Set its ?v= value to $Hash before deploying."
