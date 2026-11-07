@@ -1,7 +1,10 @@
 param(
   [string]$BucketName = "inburgering",
   [string]$Region = "us-east-1",
-  [string]$CloudFrontDistributionId = "",
+  # CloudFront ignores the ?v= query string in its cache key on the current plan, so every deploy invalidates
+  # the cache by default; otherwise visitors keep getting the old CSS/JS/cards until the cached copies expire.
+  [string]$CloudFrontDistributionId = "E2YQZKHJK1UUN4",
+  [switch]$SkipInvalidation,
   [switch]$DryRun
 )
 
@@ -66,11 +69,18 @@ if ($LASTEXITCODE -ne 0) {
   throw "Uploading index.html to $Destination failed."
 }
 
-if ($CloudFrontDistributionId -and -not $DryRun) {
-  Write-Host "Creating CloudFront invalidation for distribution $CloudFrontDistributionId..."
-  aws cloudfront create-invalidation `
-    --distribution-id $CloudFrontDistributionId `
-    --paths "/*"
+if ($CloudFrontDistributionId -and -not $SkipInvalidation) {
+  if ($DryRun) {
+    Write-Host "(dryrun) invalidate: /* on CloudFront distribution $CloudFrontDistributionId"
+  } else {
+    Write-Host "Creating CloudFront invalidation for distribution $CloudFrontDistributionId..."
+    aws cloudfront create-invalidation `
+      --distribution-id $CloudFrontDistributionId `
+      --paths "/*"
+    if ($LASTEXITCODE -ne 0) {
+      throw "Files were uploaded, but invalidating CloudFront distribution $CloudFrontDistributionId failed; visitors may get cached copies until they expire."
+    }
+  }
 }
 
 Write-Host "Deployment complete."

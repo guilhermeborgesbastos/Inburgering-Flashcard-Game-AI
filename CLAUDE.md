@@ -19,9 +19,9 @@ A static, no-build flashcard web app for Dutch inburgering (A1/A2) vocabulary. P
 - **Deploy** (PowerShell + AWS CLI; syncs repo root to S3 with `--delete`, excluding `.git`, `scripts/`, `README.md`, etc.):
   ```powershell
   ./scripts/deploy-s3.ps1 -DryRun
-  ./scripts/deploy-s3.ps1 -BucketName inburgering -CloudFrontDistributionId <id>
+  ./scripts/deploy-s3.ps1            # bucket inburgering, then invalidates CloudFront E2YQZKHJK1UUN4
   ```
-  Anything not excluded in `scripts/deploy-s3.ps1` gets published — add an `--exclude` there when introducing new non-site files. `index.html` is excluded from the sync and uploaded last with `Cache-Control: no-cache`, so new deploys show up without a CloudFront invalidation.
+  Anything not excluded in `scripts/deploy-s3.ps1` gets published — add an `--exclude` there when introducing new non-site files. `index.html` is excluded from the sync and uploaded last with `Cache-Control: no-cache`, so CloudFront revalidates it on every visit. CloudFront's cache key ignores query strings on the current plan, so the `?v=` versions below only bust browser caches; the script therefore invalidates `/*` after every deploy (`-SkipInvalidation` to opt out, `-CloudFrontDistributionId` to override).
 - **Asset versions:** `index.html` loads `style.css` and `app.js` with `?v=<first 12 hex chars of the file's SHA-256>`, and passes `cards.json` the same way in the `app.js` script tag's `data-cards-url` (read by `CARDS_DATA_URL`). After editing any of the three, update its value (`sha256sum assets/data/cards.json | cut -c1-12`); the deploy script refuses to run otherwise.
 
 ## Architecture
