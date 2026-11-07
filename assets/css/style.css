@@ -397,6 +397,7 @@ input {
   line-height: 1.15;
   letter-spacing: -0.015em;
   color: var(--teal-900);
+  overflow-wrap: anywhere;
   text-wrap: balance;
 }
 
